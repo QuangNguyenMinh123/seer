@@ -374,6 +374,10 @@ QString SeerDebugDialog::launchMode () const {
     }else if (runModeTabWidget->currentIndex() == 4) {
 
         return "corefile";
+
+    } else if (runModeTabWidget->currentIndex() == 5) {
+
+        return "openocd";
     }
 
     qWarning() << "Unknown launch mode of:" << runModeTabWidget->currentIndex();
@@ -770,6 +774,16 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         QJsonObject modeJson;
 
         modeJson["corefile"]            = loadCoreFilenameLineEdit->text();
+
+        seerProjectJson["corefilemode"] = modeJson;
+    }
+
+    // Save OpenOCD project.
+    if (launchMode() == "openocd") {
+
+        QJsonObject modeJson;
+
+        modeJson["openocd"]            = loadCoreFilenameLineEdit->text();
 
         seerProjectJson["corefilemode"] = modeJson;
     }
