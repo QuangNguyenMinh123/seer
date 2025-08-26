@@ -976,14 +976,35 @@
             <item row="0" column="0" colspan="2">
              <widget class="QTabWidget" name="openOCDTabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="MainTab">
                <attribute name="title">
                 <string>Main</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_10">
-                <item>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="openOCDMainSettingLabel">
+                  <property name="text">
+                   <string>OpenOCD setting</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="4">
+                 <widget class="QToolButton" name="openOCDMainHelpButton">
+                  <property name="toolTip">
+                   <string>Help for Corefile launch method.</string>
+                  </property>
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="5">
                  <widget class="QGroupBox" name="executableNameGroupBox_2">
                   <property name="enabled">
                    <bool>true</bool>
@@ -999,14 +1020,14 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_18">
                    <item>
-                    <widget class="QLabel" name="label_6">
+                    <widget class="QLabel" name="executableOpenOCDPathLabel">
                      <property name="text">
                       <string>OpenOCD Executable path</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableNameLineEdit_2">
+                    <widget class="QLineEdit" name="executableOpenOCDPath">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1025,7 +1046,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="executableNameToolButton_2">
+                    <widget class="QToolButton" name="executableOpenOCDButton">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1047,7 +1068,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item>
+                <item row="2" column="0" colspan="2">
                  <widget class="QGroupBox" name="executableNameGroupBox_3">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1063,14 +1084,14 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_19">
                    <item>
-                    <widget class="QLabel" name="label_7">
+                    <widget class="QLabel" name="openOCD_GDB_Port_Label">
                      <property name="text">
                       <string>GDB port</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableNameLineEdit_4">
+                    <widget class="QLineEdit" name="openOCD_GDB_Port_LineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1091,7 +1112,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item>
+                <item row="2" column="2">
                  <widget class="QGroupBox" name="executableNameGroupBox_4">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1107,14 +1128,14 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_20">
                    <item>
-                    <widget class="QLabel" name="label_8">
+                    <widget class="QLabel" name="openOCD_Telnet_Port_Label">
                      <property name="text">
                       <string>Telnet port</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableNameLineEdit_5">
+                    <widget class="QLineEdit" name="openOCD_Telnet_Port_LineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1135,7 +1156,14 @@
                   </layout>
                  </widget>
                 </item>
-                <item>
+                <item row="2" column="3">
+                 <widget class="QPushButton" name="openOCDMainDefaultSettingButton">
+                  <property name="text">
+                   <string>Default setting</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0" colspan="5">
                  <widget class="QGroupBox" name="executableNameGroupBox_6">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1151,14 +1179,14 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_22">
                    <item>
-                    <widget class="QLabel" name="label_10">
+                    <widget class="QLabel" name="openOCDCommandLabel">
                      <property name="text">
-                      <string>Config options</string>
+                      <string>OpenOCD command</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableNameLineEdit_7">
+                    <widget class="QLineEdit" name="openOCDCommandLineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1166,10 +1194,10 @@
                       </sizepolicy>
                      </property>
                      <property name="toolTip">
-                      <string>OpenOCD additional command. Eg: -f jlink.cfg -f bluepill.cfg</string>
+                      <string>OpenOCD additional command. Eg: -f &lt;path to&gt;/jlink.cfg -f &lt;path to&gt;/bluepill.cfg</string>
                      </property>
                      <property name="placeholderText">
-                      <string>OpenOCD additional command. Eg: -f jlink.cfg -f bluepill.cfg</string>
+                      <string>OpenOCD additional command. Eg: -f &lt;path to&gt;/jlink.cfg -f &lt;path to&gt;/bluepill.cfg</string>
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>true</bool>
@@ -1179,12 +1207,18 @@
                   </layout>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton">
-                  <property name="text">
-                   <string>Default setting</string>
+                <item row="0" column="1">
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                 </widget>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -1192,8 +1226,42 @@
                <attribute name="title">
                 <string>Kernel</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
+               <layout class="QGridLayout" name="gridLayout_8">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="openOCDKernelKernelSettinglLabel">
+                  <property name="text">
+                   <string>Kernel setting</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <spacer name="horizontalSpacer_10">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>1041</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QToolButton" name="openOCDKernelHelpButton">
+                  <property name="toolTip">
+                   <string>Help for Corefile launch method.</string>
+                  </property>
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="3">
                  <widget class="QGroupBox" name="executableSymbolNameGroupBox_2">
                   <property name="title">
                    <string>Kernel Symbol File</string>
@@ -1208,7 +1276,7 @@
                    <item>
                     <layout class="QHBoxLayout" name="horizontalLayout_14">
                      <item>
-                      <widget class="QLineEdit" name="executableSymbolNameLineEdit_2">
+                      <widget class="QLineEdit" name="openOCDKernelKernelSymbolLineEdit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -1227,7 +1295,7 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QToolButton" name="executableSymbolNameToolButton_2">
+                      <widget class="QToolButton" name="openOCDKernelKernelSymbolPathButton">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -1251,7 +1319,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item>
+                <item row="2" column="0" colspan="3">
                  <widget class="QGroupBox" name="executableWorkingDirectoryGroupBox_2">
                   <property name="toolTip">
                    <string/>
@@ -1266,7 +1334,7 @@
                    <item>
                     <layout class="QHBoxLayout" name="horizontalLayout_13">
                      <item>
-                      <widget class="QLineEdit" name="executableWorkingDirectoryLineEdit_2">
+                      <widget class="QLineEdit" name="openOCDKernelKernelDirLineEdit">
                        <property name="toolTip">
                         <string>The path to kernel source code</string>
                        </property>
@@ -1279,7 +1347,7 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QToolButton" name="executableWorkingDirectoryToolButton_2">
+                      <widget class="QToolButton" name="openOCDKernelKernelDirPathButton">
                        <property name="toolTip">
                         <string>Open a dialog to select a path.</string>
                        </property>
@@ -1303,39 +1371,66 @@
                <attribute name="title">
                 <string>Kernel Module</string>
                </attribute>
-               <layout class="QFormLayout" name="formLayout">
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="More">
+               <layout class="QGridLayout" name="gridLayout_10">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="openOCDKernelModuleLabel">
                   <property name="text">
-                   <string>More</string>
+                   <string>Kernel Module setting</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0" colspan="2">
-                 <widget class="QScrollArea" name="scrollArea">
+                <item row="0" column="1">
+                 <spacer name="horizontalSpacer_12">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QToolButton" name="openOCDKernelModuleHelpButton">
+                  <property name="toolTip">
+                   <string>Help for Corefile launch method.</string>
+                  </property>
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="3">
+                 <widget class="QScrollArea" name="scrollArea_2">
                   <property name="widgetResizable">
                    <bool>true</bool>
                   </property>
-                  <widget class="QWidget" name="scrollAreaWidgetContents">
+                  <widget class="QWidget" name="scrollAreaWidgetContents_2">
                    <property name="geometry">
                     <rect>
                      <x>0</x>
-                     <y>0</y>
-                     <width>1174</width>
-                     <height>228</height>
+                     <y>-77</y>
+                     <width>1160</width>
+                     <height>247</height>
                     </rect>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_8">
-                    <item>
+                   <layout class="QFormLayout" name="formLayout_3">
+                    <item row="0" column="0" colspan="2">
                      <widget class="QGroupBox" name="groupBox">
                       <property name="title">
-                       <string>Kernel Module</string>
+                       <string>Kernel Module 1</string>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_12">
+                      <layout class="QVBoxLayout" name="verticalLayout_9">
                        <item>
                         <widget class="QGroupBox" name="executableSymbolNameGroupBox_3">
                          <property name="title">
-                          <string>Symbol File</string>
+                          <string>Kernel Module Symbol File</string>
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1343,11 +1438,11 @@
                          <property name="flat">
                           <bool>false</bool>
                          </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_15">
+                         <layout class="QHBoxLayout" name="horizontalLayout_2">
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_17">
+                           <layout class="QHBoxLayout" name="horizontalLayout_15">
                             <item>
-                             <widget class="QLineEdit" name="executableSymbolNameLineEdit_3">
+                             <widget class="QLineEdit" name="openOCDKernelModuleSymbolPathLineEdit">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -1355,10 +1450,10 @@
                                </sizepolicy>
                               </property>
                               <property name="toolTip">
-                               <string>Path to .ko file</string>
+                               <string>Path to Kernel Module Symbol .ko</string>
                               </property>
                               <property name="placeholderText">
-                               <string>Path to .ko file</string>
+                               <string>Path to Kernel Module Symbol .ko</string>
                               </property>
                               <property name="clearButtonEnabled">
                                <bool>true</bool>
@@ -1366,7 +1461,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QToolButton" name="executableSymbolNameToolButton_3">
+                             <widget class="QToolButton" name="openOCDKernelModuleSymbolPathButton">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -1396,21 +1491,21 @@
                           <string/>
                          </property>
                          <property name="title">
-                          <string>Kernel Module Source Code</string>
+                          <string>Source Code Directory</string>
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                          </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_13">
+                         <layout class="QVBoxLayout" name="verticalLayout_6">
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_15">
+                           <layout class="QHBoxLayout" name="horizontalLayout_16">
                             <item>
-                             <widget class="QLineEdit" name="executableWorkingDirectoryLineEdit_3">
+                             <widget class="QLineEdit" name="openOCDKernelModuleDirLineEdit">
                               <property name="toolTip">
-                               <string>The path to kernel module source code directory</string>
+                               <string>Path to kernel module source code directory</string>
                               </property>
                               <property name="placeholderText">
-                               <string>The path to kernel module source code directory</string>
+                               <string>Path to kernel module source code directory</string>
                               </property>
                               <property name="clearButtonEnabled">
                                <bool>true</bool>
@@ -1418,7 +1513,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QToolButton" name="executableWorkingDirectoryToolButton_3">
+                             <widget class="QToolButton" name="openOCDKernelModuleDirButton">
                               <property name="toolTip">
                                <string>Open a dialog to select a path.</string>
                               </property>
@@ -1438,6 +1533,26 @@
                        </item>
                       </layout>
                      </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QPushButton" name="openOCDKernelModuleMoreButton">
+                      <property name="text">
+                       <string>More</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <spacer name="horizontalSpacer_11">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
                     </item>
                    </layout>
                   </widget>
