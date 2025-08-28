@@ -285,7 +285,6 @@ set(SOURCE_FILES
     ../src/SeerConsoleWidget.cpp
     ../src/SeerKeySettings.cpp
     ../src/SeerSkipBrowserWidget.cpp
-    ../src/seerutl_test.cpp
     ../src/QProcessInfoWidget.cpp
     ../src/SeerCppSourceHighlighter.cpp
     ../src/SeerLibraryBrowserWidget.cpp
@@ -328,13 +327,12 @@ set(SOURCE_FILES
     ../src/SeerEditorWidgetSource.cpp
     ../src/SeerPlainTextEdit.cpp
     ../src/SeerStackFramesBrowserWidget.cpp
-    ../src/resource.qrc
     )
 
 if(${QTVERSION} STREQUAL "QT6")
-    qt6_add_resources(HEADER_FILES SOURCE_FILES ../src/resource.qrc ../src/resources/qdarkstyle/dark/darkstyle.qrc ../src/resources/qdarkstyle/light/lightstyle.qrc)
+    qt6_add_resources(HEADER_FILES  )
 elseif(${QTVERSION} STREQUAL "QT5")
-    qt5_add_resources(HEADER_FILES SOURCE_FILES ../src/resource.qrc ../src/resources/qdarkstyle/dark/darkstyle.qrc ../src/resources/qdarkstyle/light/lightstyle.qrc)
+    qt5_add_resources(HEADER_FILES  )
 endif()
 
 # Set non-Debug build as GUI application.
@@ -358,9 +356,6 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(seergdb PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
-
-qt6_add_resources(QRC_SOURCES ../src/resources.qrc)
-target_sources(seergdb PRIVATE ${QRC_SOURCES})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
