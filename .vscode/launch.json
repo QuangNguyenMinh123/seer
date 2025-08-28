@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": true,
+      "externalConsole": false,
+      "cwd": "${workspaceFolder}/src",
+      "program": "${workspaceFolder}/src/build/seergdb",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": false
+        },
+        {
+          "description": "Break at main",
+          "text": "break main",
+          "ignoreFailures": false
+        }
+      ],
+      "visualizerFile": "/home/quangnm/.config/Code/User/workspaceStorage/7bca446367718f62da01c7bf9b7ef37f/tonka3000.qtvsctools/qt.natvis.xml"
+    }
+  ]
+}

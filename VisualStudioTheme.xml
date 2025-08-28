@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<style-scheme version="1.0" name="Visual Studio Dark">
+  <style name="Text" foreground="#dcdcdc" background="#1e1e1e"/>
+  <style name="Link"/>
+  <style name="Selection" background="#264f78"/>
+  <style name="LineNumber" foreground="#2b91af" background="#191919"/>
+  <style name="SearchResult" background="#623916"/>
+  <style name="SearchResultAlt1" foreground="#000033" background="#4f5f73"/>
+  <style name="SearchResultAlt2" foreground="#330000" background="#ffb6cc"/>
+  <style name="SearchResultContainingFunction"/>
+  <style name="SearchScope" background="#12202a"/>
+  <style name="Parentheses" foreground="#b4b4b4"/>
+  <style name="ParenthesesMismatch" foreground="#b4b4b4"/>
+  <style name="AutoComplete"/>
+  <style name="CurrentLine" background="#0f0f0f"/>
+  <style name="CurrentLineNumber" foreground="#2b91af"/>
+  <style name="Occurrences" background="#999999"/>
+  <style name="Occurrences.Unused" underlineColor="#808000" underlineStyle="SingleUnderline"/>
+  <style name="Occurrences.Rename" background="#ff6464"/>
+  <style name="Number" foreground="#b5cea8"/>
+  <style name="String" foreground="#d69d85"/>
+  <style name="Type" foreground="#4ec9b0"/>
+  <style name="Namespace" foreground="#c8c8c8"/>
+  <style name="Local" foreground="#9cdcfe"/>
+  <style name="Parameter" foreground="#9a9a9a"/>
+  <style name="Global"/>
+  <style name="Field" foreground="#dadada"/>
+  <style name="Static" foreground="#b8d7a3"/>
+  <style name="VirtualMethod" foreground="#dcdcaa"/>
+  <style name="Function" foreground="#dcdcaa"/>
+  <style name="Keyword" foreground="#569cd6"/>
+  <style name="PrimitiveType" foreground="#569cd6"/>
+  <style name="Operator" foreground="#b4b4b4"/>
+  <style name="Overloaded Operator" foreground="#b4b4b4"/>
+  <style name="Punctuation" foreground="#b4b4b4"/>
+  <style name="Preprocessor" foreground="#9b9b9b"/>
+  <style name="Macro" foreground="#beb7ff"/>
+  <style name="Label"/>
+  <style name="Comment" foreground="#57a64a"/>
+  <style name="Doxygen.Comment" foreground="#57a64a"/>
+  <style name="Doxygen.Tag" foreground="#57a64a" bold="true"/>
+  <style name="VisualWhitespace" foreground="#3b3b3b"/>
+  <style name="QmlLocalId" italic="true"/>
+  <style name="QmlExternalId" italic="true"/>
+  <style name="QmlTypeId"/>
+  <style name="QmlRootObjectProperty" italic="true"/>
+  <style name="QmlScopeObjectProperty" italic="true"/>
+  <style name="QmlExternalObjectProperty" italic="true"/>
+  <style name="JsScopeVar" italic="true"/>
+  <style name="JsImportVar" italic="true"/>
+  <style name="JsGlobalVar" italic="true"/>
+  <style name="QmlStateName" italic="true"/>
+  <style name="Binding"/>
+  <style name="DisabledCode"/>
+  <style name="AddedLine"/>
+  <style name="RemovedLine"/>
+  <style name="DiffFile"/>
+  <style name="DiffLocation"/>
+  <style name="DiffFileLine"/>
+  <style name="DiffContextLine"/>
+  <style name="DiffSourceLine"/>
+  <style name="DiffSourceChar"/>
+  <style name="DiffDestLine"/>
+  <style name="DiffDestChar"/>
+  <style name="LogChangeLine" foreground="#c00000"/>
+  <style name="LogAuthorName" foreground="#007af4"/>
+  <style name="LogCommitDate" foreground="#006600"/>
+  <style name="LogCommitHash" foreground="#ff0000"/>
+  <style name="LogCommitSubject"/>
+  <style name="LogDecoration" foreground="#ff00ff"/>
+  <style name="Warning" underlineColor="#ffbe00"/>
+  <style name="WarningContext" underlineColor="#ffbe00"/>
+  <style name="Error" underlineColor="#ff0000" underlineStyle="SingleUnderline"/>
+  <style name="ErrorContext" underlineColor="#ff0000" underlineStyle="DotLine"/>
+  <style name="Declaration"/>
+  <style name="FunctionDefinition" foreground="#dcdcaa"/>
+  <style name="OutputArgument" italic="true"/>
+  <style name="StaticMember"/>
+  <style name="CocoCodeAdded"/>
+  <style name="CocoPartiallyCovered" foreground="#808000"/>
+  <style name="CocoNotCovered" foreground="#ff0000"/>
+  <style name="CocoFullyCovered" foreground="#00ff00"/>
+  <style name="CocoManuallyValidated" foreground="#0000ff"/>
+  <style name="CocoDeadCode" foreground="#ff00ff"/>
+  <style name="CocoExecutionCountTooLow" foreground="#ff0000"/>
+  <style name="CocoNotCoveredInfo" foreground="#ff0000"/>
+  <style name="CocoCoveredInfo" foreground="#00ff00"/>
+  <style name="CocoManuallyValidatedInfo" foreground="#0000ff"/>
+  <style name="LastStyleSentinel"/>
+</style-scheme>

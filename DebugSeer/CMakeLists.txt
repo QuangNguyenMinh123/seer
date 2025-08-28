@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-project(seergdb VERSION 2.6.0 LANGUAGES CXX)
+project(DebugSeer VERSION 2.6.0 LANGUAGES CXX)
 
-set(PROJECT_NAME seergdb)
+set(PROJECT_NAME DebugSeer)
 
 if(NOT DEFINED QTVERSION)
     set(QTVERSION "QT6" CACHE STRING "" FORCE)
@@ -353,7 +353,7 @@ add_definitions(-DQT_DISABLE_DEPRECATED_UP_TO=0x060300)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 
-target_include_directories(seergdb PRIVATE
+target_include_directories(DebugSeer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
 
