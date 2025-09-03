@@ -1,7 +1,8 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -Wall -Wextra -O2 -Iinclude
-
+CXXFLAGS := -Wall -Wextra -Iinclude
+# CRITICAL! Don't forget -g and remove optimization
+CXXFLAGS +=  -g -O0
 # Directories
 SRC_DIR := src
 OBJ_DIR := obj
