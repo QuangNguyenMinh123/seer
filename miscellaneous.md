@@ -1,5 +1,8 @@
 # Todo list
-
+1. Capture OpenOCD launch mode
+2. Start OpenOCD process
+3. Start GDB-multiarch process
+4. Connect GDB-multiarch to OpenOCD port
 # To fix attach to target issue
 2 solutions:
 - ```sudo seergdb```

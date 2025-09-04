@@ -80,7 +80,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpRRToolButton,                     &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRRToolButtonClicked);
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
-
+    // OpenOCD button
+    QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -179,6 +180,10 @@ QString SeerDebugDialog::breakpointMode () const {
         return "infunction";
     }else if (breakpointAtSourceRadioButton->isChecked()) {
         return "insource";
+    }
+    // openocd is selected
+    if (runModeTabWidget->currentIndex() == 5) {
+        return "hardware";
     }
 
     return "inmain";
@@ -333,7 +338,12 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
         runModeTabWidget->setCurrentIndex(4);
 
-    }else if (mode == "") {
+    } else if (mode == "openocd") {
+
+        runModeTabWidget->setCurrentIndex(5);
+
+    }
+    else if (mode == "") {
 
         runModeTabWidget->setCurrentIndex(0);
 
@@ -516,6 +526,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     QJsonObject   connectModeJson;
     QJsonObject   rrModeJson;
     QJsonObject   corefileModeJson;
+    QJsonObject   openocdModeJson;
     QJsonArray    preConnectCommands;
     QJsonArray    postConnectCommands;
 
@@ -532,6 +543,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     connectModeJson     = seerProjectJson.value("connectmode").toObject();
     rrModeJson          = seerProjectJson.value("rrmode").toObject();
     corefileModeJson    = seerProjectJson.value("corefilemode").toObject();
+    openocdModeJson     = seerProjectJson.value("openocdmode").toObject();
     preConnectCommands  = seerProjectJson.value("pregdbcommands").toArray();
     postConnectCommands = seerProjectJson.value("postgdbcommands").toArray();
 
@@ -660,6 +672,14 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
         setLaunchMode("corefile");
     }
 
+    // Load OPENOCD project
+    if (openocdModeJson.isEmpty() == false) {
+
+        loadCoreFilenameLineEdit->setText(corefileModeJson["corefile"].toString());
+
+        setLaunchMode("openocd");
+    }
+
     if (notify) {
         QMessageBox::information(p, "Success", QString("Loaded the Seer project file '%1'.").arg(filename));
     }
@@ -786,6 +806,7 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         modeJson["openocd"]            = loadCoreFilenameLineEdit->text();
 
         seerProjectJson["corefilemode"] = modeJson;
+        QMessageBox::information(this, "Note", QString("OpenOCD project"));
     }
 
     rootJson["seerproject"] = seerProjectJson;
@@ -878,6 +899,11 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
     }
+
+    // ID = 5   OpenOCD
+    if (id == 5) {
+
+    }
 }
 
 void SeerDebugDialog::handleHelpModeToolButtonClicked () {
@@ -954,3 +980,75 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
+// OpenOCD Code
+// OpenOCD tab: main
+// Set OpenOCD executable path
+// void SeerDebugDialog::setOpenOCDMainExePath(const QString& path){
+
+// }
+// // Read OpenOCD executable path
+// QString SeerDebugDialog::openOCDMainExePath() const{
+//     return "";
+// }
+
+// void SeerDebugDialog::setOpenOCDMainGDBPort() {
+
+// }
+
+// QString SeerDubgDialog::openOCDMainGDBPort() {
+
+// }
+
+// void SeerDebugDialog::setOpenOCDMainTelnetPort() {
+
+// }
+
+// QString SeerDubgDialog::OpenOCDMainTelnetPort() {
+
+// }
+
+// Do this when OpenOCD Tab -> Main -> Default Button clicked
+void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
+    QString defaultOpenOCDPath = "/usr/local/bin/openocd";
+    QString defaultGDBPort = "3333";
+    QString defaultTelnetPort = "4444";
+    QMessageBox::information(this, "Info", QString("Set OpenOCD path to '%1', GDB Port to '%2' and Telnet Port to '%3'.").arg(defaultOpenOCDPath).arg(defaultGDBPort).arg(defaultTelnetPort));
+}
+
+// QString SeerDebugDialog::openOCDMainOpenOCDCommand() {
+
+// }
+
+// // OpenOCD tab: GDB Multiarch
+// // 
+// void SeerDebugDialog::setOpenOCDGDBMultiarchPath(const QString& path){
+
+// }
+// // Read gdb-multiarch executable path
+// QString SeerDebugDialog::openOCDGDBMultiarchPath() const{
+//     return "";
+// }
+
+// QString SeerDubgDialog::openOCDGDBMultiarchCommand() {
+
+// }
+
+// OpenOCD tab: Kernel
+// Read Kernel Symbol Path
+// QString SeerDebugDialog::openOCDKernelSymbolPath() const{
+//     return "";
+// }
+// // Read Kernel source code path
+// QString SeerDebugDialog::openOCDKernelSourceCodePath() const{
+//     return "";
+// }
+
+// // OpenOCD tab: Kernel Module
+// // Read Kernel Module Symbol Path
+// QString SeerDebugDialog::openOCDKernelModuleSymbolPath() const{
+//     return "";
+// }
+// // Read Kernel source code path
+// QString SeerDebugDialog::openOCDKernelModuleSourceCodePath() const{
+//     return "";
+// }

@@ -441,6 +441,9 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionControlTerminate->setVisible(false);
     actionControlInterrupt->setVisible(true);
 
+    // openocd
+    actionOpenOCDAttach->setVisible(false);
+    menuOpenOCD->setVisible(false);
     if (launchMode == "run") {
 
         gdbWidget->handleGdbRunExecutable(breakMode, false);
@@ -475,6 +478,15 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionRecordDirection->setVisible(false);
 
         gdbWidget->handleGdbCoreFileExecutable();
+
+    } else if (launchMode == "openocd") {
+        // display attach button
+        // menubar->actionOpenOCD->setVisible(true);
+        actionOpenOCDAttach->setVisible(true);
+        // launch gdb with openocd
+        gdbWidget->handleGdbMultiarchOpenOCDExecutable(false);
+        
+        QMessageBox::information(this, "OpenOCD Debugging", "OpenOCD Debugging is started.", QMessageBox::Ok);
 
     }else if (launchMode == "project") {
 
@@ -599,6 +611,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());
+    // openocd read variables
 
     launchExecutable(launchMode, breakMode);
 }
@@ -1788,3 +1801,11 @@ void SeerMainWindow::refreshShortCuts () {
     gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 
+// openocd get and set functions
+const QString& SeerMainWindow::openOCDExePath () const {
+    return gdbWidget->executableName();
+}
+
+void SeerMainWindow::setOpenOCDExePath (const QString& executable) {
+    gdbWidget->setExecutableSymbolName(executableSymbolName);
+}

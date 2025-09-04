@@ -78,6 +78,9 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 projectFilename                                 () const;
         void                    loadProject                                     (const QString& filename, bool notify);
 
+        // OpenOCD code
+        void                    setOpenOCDExePath                              (const QString& path);
+
     protected slots:
         void                    handleExecutableNameToolButton                  ();
         void                    handleExecutableSymbolNameToolButton            ();
@@ -90,6 +93,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleLoadProjectToolButton                     ();
         void                    handleSaveProjectToolButton                     ();
         void                    handleRunModeChanged                            (int id);
+        // OpenOCD button handler
+        void                    handleOpenOCDMainDefaultButtonClicked           ();
 
     private slots:
         void                    handleHelpModeToolButtonClicked                 ();

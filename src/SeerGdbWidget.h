@@ -228,6 +228,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbConnectExecutable          (bool loadSessionBreakpoints);
         void                                handleGdbRRExecutable               (bool loadSessionBreakpoints);
         void                                handleGdbCoreFileExecutable         ();
+        // openocd gdb-multiarch support
+        void                                handleGdbMultiarchOpenOCDExecutable (bool loadSessionBreakpoints);
         void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -465,5 +467,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QVector<QString>                    _dataExpressionName;
 
         QStringList                         _ignoreFilePatterns;
+        // openOCD variables
+        QString                             _openOCDExePath;
+        QString                             _GDBPort;
+        QString                             _TelnetPort;
+        QString                             _openOCDCommands;
+        QString                             _gdbMultiarchExePath;
+        QString                             _gdbMultiarchArguments;
+        QMap<QString, QString>              _kernelSymbolPath;
+        QMap<QString, QString>              _kernelModuleSymbolPath;
 };
 

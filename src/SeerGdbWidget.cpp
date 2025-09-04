@@ -1054,10 +1054,11 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         // Always say a new executable.
         // This causes a new gdb each time. The same console, though.
         setNewExecutableFlag(true);
-
+        qCDebug(LC) << "QuangNM13 check 1: " << newExecutableFlag();
         // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
+            qCDebug(LC) << "QuangNM13 check 2: " << newExecutableFlag();
+            // console()->deleteTerminal();
             killGdb();
         }
 
@@ -4155,3 +4156,8 @@ void SeerGdbWidget::delay (int seconds) {
     }
 }
 
+// openocd code
+void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
+{
+
+}
