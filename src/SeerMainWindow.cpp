@@ -1802,10 +1802,6 @@ void SeerMainWindow::refreshShortCuts () {
 }
 
 // openocd get and set functions
-const QString& SeerMainWindow::openOCDExePath () const {
-    return gdbWidget->executableName();
-}
-
-void SeerMainWindow::setOpenOCDExePath (const QString& executable) {
-    gdbWidget->setExecutableSymbolName(executableSymbolName);
+const QString& SeerMainWindow::openOCDExePath () {
+    return gdbWidget->openOCDExePath();
 }

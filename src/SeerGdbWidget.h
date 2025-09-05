@@ -214,6 +214,31 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                clearBackupLaunchMode               ();
         const QString&                      backupLaunchMode                    () const;
 
+        // OpenOCD
+        // ::Main
+        const QString&                      openOCDExePath                      ();
+        const QString&                      gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString&                      telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        const QString&                      openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        // ::GDB Multiarch
+        const QString&                      gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString&                      gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        // ::Kernel
+        const QString&                      kernelSymbolPath                    ();
+        void                                setKernelSymbolPath                 (const QString& path);
+        const QString&                      kernelCodePath                      ();
+        void                                setKernelCodePath                   (const QString& path);
+        // ::Kernel Module
+        // const QString&                      kernelSymbolPath                    () const;
+        // void                                setKernelSymbolPath                 (const QString& executable);
+        // const QString&                      kernelCodePath                      () const;
+        // void                                setKernelCodePath                   (const QString& executable);
+
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
         void                                handleLogsTabChanged                (int index);
@@ -470,10 +495,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // openOCD variables
         QString                             _openOCDExePath;
         QString                             _GDBPort;
-        QString                             _TelnetPort;
+        QString                             _telnetPort;
         QString                             _openOCDCommands;
         QString                             _gdbMultiarchExePath;
-        QString                             _gdbMultiarchArguments;
+        QString                             _gdbMultiarchCommands;
         QMap<QString, QString>              _kernelSymbolPath;
         QMap<QString, QString>              _kernelModuleSymbolPath;
 };

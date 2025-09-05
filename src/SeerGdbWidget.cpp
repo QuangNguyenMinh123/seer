@@ -4156,8 +4156,74 @@ void SeerGdbWidget::delay (int seconds) {
     }
 }
 
-// openocd code
+// OpenOCD
+// This is call when Launch in OpenOCD mode, just like function invoked in Run/Attach mode
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
 {
+
+}
+// getter and setter, mainly called from SeerMainWindow.cpp
+// ::Main
+void setOpenOcdExePath (const QString& path) {
+    
+}
+
+const QString& SeerGdbWidget::openOCDExePath() {
+    return _openOCDExePath;
+}
+
+const QString& SeerGdbWidget::gdbPort() {
+    return _GDBPort;
+}
+
+void SeerGdbWidget::setGdbPort (const QString& port){
+    _GDBPort = port;
+}
+const QString& SeerGdbWidget::telnetPort() {
+    return _telnetPort;
+}
+
+void SeerGdbWidget::setTelnetPort (const QString& port){
+    _telnetPort = port;
+}
+
+const QString& SeerGdbWidget::openOCDCommand() {
+
+}
+
+void SeerGdbWidget::setOpenOCDCommand (const QString& command){
+    _openOCDCommands = command;
+}
+
+// ::GDB Multiarch
+const QString& SeerGdbWidget::gdbMultiarchExePath () {
+    return _gdbMultiarchExePath;
+}
+
+void SeerGdbWidget::setGdbMultiarchExePath (const QString& path) {
+    _gdbMultiarchExePath = path;
+}
+
+const QString& SeerGdbWidget::gdbMultiarchCommand () {
+    return _gdbMultiarchCommands;
+}
+
+void SeerGdbWidget::setGdbMultiarchCommand (const QString& command) {
+    _gdbMultiarchCommands = command;
+}
+// ::Kernel
+const QString& SeerGdbWidget::kernelSymbolPath () {
+    return "abc";
+}
+
+void SeerGdbWidget::setKernelSymbolPath (const QString& path){
+
+}
+
+const QString& SeerGdbWidget::kernelCodePath () {
+    return "abc";
+}
+
+void SeerGdbWidget::setKernelCodePath (const QString& path){
 
 }

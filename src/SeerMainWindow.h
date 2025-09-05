@@ -71,6 +71,9 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
 
+        // openocd get and set functions
+        const QString&              openOCDExePath                          ();
+    
     private slots:
         void                        handleFileDebug                         ();
         void                        handleFileArguments                     ();
