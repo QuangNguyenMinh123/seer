@@ -485,7 +485,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionOpenOCDAttach->setVisible(true);
         // launch gdb with openocd
         gdbWidget->handleGdbMultiarchOpenOCDExecutable(false);
-        
+
         QMessageBox::information(this, "OpenOCD Debugging", "OpenOCD Debugging is started.", QMessageBox::Ok);
 
     }else if (launchMode == "project") {
@@ -611,7 +611,15 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());
-    // openocd read variables
+
+    // read openocd variables
+    setOpenOCDExePath(dlg.openOCDExePath());
+    setGdbPort(dlg.gdbPort());
+    setTelnetPort(dlg.telnetPort());
+    setOpenOCDCommand(dlg.openOCDCommand());
+    setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
+    setKernelSymbolPath(dlg.kernelSymbolPath());
+    setKernelCodePath(dlg.kernelCodePath());
 
     launchExecutable(launchMode, breakMode);
 }
@@ -1802,6 +1810,66 @@ void SeerMainWindow::refreshShortCuts () {
 }
 
 // openocd get and set functions
-const QString& SeerMainWindow::openOCDExePath () {
+const QString& SeerMainWindow::openOCDExePath() {
     return gdbWidget->openOCDExePath();
+}
+
+void SeerMainWindow::setOpenOCDExePath (const QString& path) {
+    gdbWidget->setOpenOCDExePath(path);
+}
+
+const QString& SeerMainWindow::gdbPort() {
+    return gdbWidget->gdbPort();
+}
+
+void SeerMainWindow::setGdbPort (const QString& port){
+    gdbWidget->setGdbPort(port);
+}
+const QString& SeerMainWindow::telnetPort() {
+    return gdbWidget->telnetPort();
+}
+
+void SeerMainWindow::setTelnetPort (const QString& port){
+    gdbWidget->setTelnetPort(port);
+}
+
+const QString& SeerMainWindow::openOCDCommand() {
+    return gdbWidget->openOCDCommand();
+}
+
+void SeerMainWindow::setOpenOCDCommand (const QString& command){
+    gdbWidget->setOpenOCDCommand(command);
+}
+
+// ::GDB Multiarch
+const QString& SeerMainWindow::gdbMultiarchExePath () {
+    return gdbWidget->gdbMultiarchExePath();
+}
+
+void SeerMainWindow::setGdbMultiarchExePath (const QString& path) {
+    gdbWidget->setGdbMultiarchExePath(path);
+}
+
+const QString& SeerMainWindow::gdbMultiarchCommand () {
+    return gdbWidget->gdbMultiarchCommand();
+}
+
+void SeerMainWindow::setGdbMultiarchCommand (const QString& command) {
+    gdbWidget->setGdbMultiarchCommand(command);
+}
+// ::Kernel
+const QString& SeerMainWindow::kernelSymbolPath () {
+    return gdbWidget->kernelSymbolPath();
+}
+
+void SeerMainWindow::setKernelSymbolPath (const QString& path){
+    gdbWidget->setKernelSymbolPath(path);
+}
+
+const QString& SeerMainWindow::kernelCodePath () {
+    return gdbWidget->kernelCodePath();
+}
+
+void SeerMainWindow::setKernelCodePath (const QString& path){
+    gdbWidget->setKernelCodePath(path);
 }

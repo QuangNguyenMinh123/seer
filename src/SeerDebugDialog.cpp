@@ -1010,45 +1010,80 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
 // Do this when OpenOCD Tab -> Main -> Default Button clicked
 void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
     QString defaultOpenOCDPath = "/usr/local/bin/openocd";
+    QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
     QString defaultGDBPort = "3333";
     QString defaultTelnetPort = "4444";
-    QMessageBox::information(this, "Info", QString("Set OpenOCD path to '%1', GDB Port to '%2' and Telnet Port to '%3'.").arg(defaultOpenOCDPath).arg(defaultGDBPort).arg(defaultTelnetPort));
+    executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
+    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
+    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
+    openOCD_Telnet_Port_LineEdit->setText(defaultTelnetPort);
 }
 
-// QString SeerDebugDialog::openOCDMainOpenOCDCommand() {
+/***********************************************************************************************************************
+ * OpenOCD getter and setter from LineEdit                                                                      *
+***********************************************************************************************************************/
+const QString SeerDebugDialog::openOCDExePath() {
+    QString path = executableOpenOCDPathLineEdit->text();
+    path += ""; // avoid compiler warning
+    return executableOpenOCDPathLineEdit->text();
+}
 
-// }
+void SeerDebugDialog::setOpenOCDExePath (const QString& path) {
+    executableOpenOCDPathLineEdit->setText(path);
+}
 
-// // OpenOCD tab: GDB Multiarch
-// // 
-// void SeerDebugDialog::setOpenOCDGDBMultiarchPath(const QString& path){
+const QString SeerDebugDialog::gdbPort() {
+    return openOCD_GDB_Port_LineEdit->text();
+}
 
-// }
-// // Read gdb-multiarch executable path
-// QString SeerDebugDialog::openOCDGDBMultiarchPath() const{
-//     return "";
-// }
+void SeerDebugDialog::setGdbPort (const QString& port){
+    openOCD_GDB_Port_LineEdit->setText(port);
+}
+const QString SeerDebugDialog::telnetPort() {
+    return openOCD_Telnet_Port_LineEdit->text();
+}
 
-// QString SeerDubgDialog::openOCDGDBMultiarchCommand() {
+void SeerDebugDialog::setTelnetPort (const QString& port){
+    openOCD_Telnet_Port_LineEdit->setText(port);
+}
 
-// }
+const QString SeerDebugDialog::openOCDCommand() {
+    return openOCDCommandLineEdit->text();
+}
 
-// OpenOCD tab: Kernel
-// Read Kernel Symbol Path
-// QString SeerDebugDialog::openOCDKernelSymbolPath() const{
-//     return "";
-// }
-// // Read Kernel source code path
-// QString SeerDebugDialog::openOCDKernelSourceCodePath() const{
-//     return "";
-// }
+void SeerDebugDialog::setOpenOCDCommand (const QString& command){
+    openOCDCommandLineEdit->setText(command);
+}
 
-// // OpenOCD tab: Kernel Module
-// // Read Kernel Module Symbol Path
-// QString SeerDebugDialog::openOCDKernelModuleSymbolPath() const{
-//     return "";
-// }
-// // Read Kernel source code path
-// QString SeerDebugDialog::openOCDKernelModuleSourceCodePath() const{
-//     return "";
-// }
+// ::GDB Multiarch
+const QString SeerDebugDialog::gdbMultiarchExePath () {
+    return openOcdGdbMultiarchLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchExePath (const QString& path) {
+    openOcdGdbMultiarchLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::gdbMultiarchCommand () {
+    return openOCDGdbCommandLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchCommand (const QString& command) {
+    openOCDGdbCommandLineEdit->setText(command);
+}
+// ::Kernel
+const QString SeerDebugDialog::kernelSymbolPath () {
+    return openOCDKernelKernelSymbolLineEdit->text();
+}
+
+void SeerDebugDialog::setKernelSymbolPath (const QString& path){
+    openOCDKernelKernelSymbolLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::kernelCodePath () {
+    return openOCDKernelKernelDirLineEdit->text();
+}
+
+void SeerDebugDialog::setKernelCodePath (const QString& path){
+    openOCDKernelKernelDirLineEdit->setText(path);
+}

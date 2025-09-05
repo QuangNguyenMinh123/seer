@@ -78,8 +78,26 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 projectFilename                                 () const;
         void                    loadProject                                     (const QString& filename, bool notify);
 
-        // OpenOCD code
-        void                    setOpenOCDExePath                              (const QString& path);
+        // openocd get and set functions
+        // ::Main
+        const QString                       openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
+        const QString                       gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString                       telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        const QString                       openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        // ::GDB Multiarch
+        const QString                       gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString                       gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        // ::Kernel
+        const QString                       kernelSymbolPath                    ();
+        void                                setKernelSymbolPath                 (const QString& path);
+        const QString                       kernelCodePath                      ();
+        void                                setKernelCodePath                   (const QString& path);    
 
     protected slots:
         void                    handleExecutableNameToolButton                  ();
@@ -93,6 +111,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleLoadProjectToolButton                     ();
         void                    handleSaveProjectToolButton                     ();
         void                    handleRunModeChanged                            (int id);
+
         // OpenOCD button handler
         void                    handleOpenOCDMainDefaultButtonClicked           ();
 

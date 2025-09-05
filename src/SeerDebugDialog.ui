@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1300</width>
+    <width>1264</width>
     <height>856</height>
    </rect>
   </property>
@@ -14,14 +14,62 @@
    <string>Select Executable to Debug</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_12">
-   <item row="4" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="executableNameGroupBox">
+     <property name="title">
+      <string>Executable Name</string>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="executableNameLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>The path and name of an executable to debug.</string>
+          </property>
+          <property name="placeholderText">
+           <string>The path and name of an executable to debug.</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="executableNameToolButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Open a dialog to select an executable.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="1" column="0">
@@ -113,64 +161,6 @@
          <widget class="QToolButton" name="executableWorkingDirectoryToolButton">
           <property name="toolTip">
            <string>Open a dialog to select a path.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="executableNameGroupBox">
-     <property name="title">
-      <string>Executable Name</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLineEdit" name="executableNameLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>The path and name of an executable to debug.</string>
-          </property>
-          <property name="placeholderText">
-           <string>The path and name of an executable to debug.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="executableNameToolButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Open a dialog to select an executable.</string>
           </property>
           <property name="text">
            <string/>
@@ -1000,20 +990,21 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <spacer name="horizontalSpacer_8">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                <item row="0" column="4">
+                 <widget class="QToolButton" name="openOCDMainHelpButton">
+                  <property name="toolTip">
+                   <string>Help for Corefile launch method.</string>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>30</width>
-                    <height>20</height>
-                   </size>
+                  <property name="text">
+                   <string>...</string>
                   </property>
-                 </spacer>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+                  </property>
+                 </widget>
                 </item>
-                <item row="1" column="0" colspan="4">
+                <item row="1" column="0" colspan="5">
                  <widget class="QGroupBox" name="executableNameGroupBox_2">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1036,7 +1027,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableOpenOCDPath">
+                    <widget class="QLineEdit" name="executableOpenOCDPathLineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1077,7 +1068,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="2" column="0" colspan="2">
                  <widget class="QGroupBox" name="executableNameGroupBox_3">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1121,7 +1112,58 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="3" column="0" colspan="4">
+                <item row="2" column="2">
+                 <widget class="QGroupBox" name="executableNameGroupBox_4">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="title">
+                   <string notr="true"/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <item>
+                    <widget class="QLabel" name="openOCD_Telnet_Port_Label">
+                     <property name="text">
+                      <string>Telnet port</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="openOCD_Telnet_Port_LineEdit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>Specify Telnet port</string>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Specify Telnet port</string>
+                     </property>
+                     <property name="clearButtonEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QPushButton" name="openOCDMainDefaultSettingButton">
+                  <property name="text">
+                   <string>Default setting</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0" colspan="5">
                  <widget class="QGroupBox" name="executableNameGroupBox_6">
                   <property name="enabled">
                    <bool>true</bool>
@@ -1165,70 +1207,18 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="0" column="3">
-                 <widget class="QToolButton" name="openOCDMainHelpButton">
-                  <property name="toolTip">
-                   <string>Help for Corefile launch method.</string>
+                <item row="0" column="1">
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="text">
-                   <string>...</string>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
                   </property>
-                  <property name="icon">
-                   <iconset resource="resource.qrc">
-                    <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QGroupBox" name="executableNameGroupBox_4">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="title">
-                   <string notr="true"/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_17">
-                   <item>
-                    <widget class="QLabel" name="openOCD_Telnet_Port_Label">
-                     <property name="text">
-                      <string>Telnet port</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="openOCD_Telnet_Port_LineEdit">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="toolTip">
-                      <string>Specify Telnet port</string>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Specify Telnet port</string>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QPushButton" name="openOCDMainDefaultSettingButton">
-                  <property name="text">
-                   <string>Default setting</string>
-                  </property>
-                 </widget>
+                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -1273,14 +1263,14 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_23">
                    <item>
-                    <widget class="QLabel" name="executableOpenOCDPathLabel_2">
+                    <widget class="QLabel" name="openOcdGdbMultiarchPathLabel">
                      <property name="text">
                       <string>GDB Multiarch Executable</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableOpenOCDPath_2">
+                    <widget class="QLineEdit" name="openOcdGdbMultiarchLineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1299,7 +1289,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="executableOpenOCDButton_2">
+                    <widget class="QToolButton" name="openOcdGdbMultiarchHelpButton">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1344,7 +1334,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="executableOpenOCDPath_3">
+                    <widget class="QLineEdit" name="openOCDGdbCommandLineEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1763,6 +1753,16 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>

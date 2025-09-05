@@ -4,3 +4,5 @@ debian
 obj-x86_64-linux-gnu
 build-DebugSeer-Desktop-Debug
 Example
+openocd
+libjaylink

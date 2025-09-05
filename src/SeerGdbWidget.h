@@ -217,6 +217,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // OpenOCD
         // ::Main
         const QString&                      openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
         const QString&                      gdbPort                             ();
         void                                setGdbPort                          (const QString& port);
         const QString&                      telnetPort                          ();
@@ -419,6 +420,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         bool                                startGdb                            ();
         bool                                startGdbRR                          ();
+
+        // For openOCD gdb-multiarch support
+        bool                                startGdbMultiarch                   ();
+        bool                                killGdbMultiarch                    ();
+
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
@@ -492,7 +498,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QVector<QString>                    _dataExpressionName;
 
         QStringList                         _ignoreFilePatterns;
+
         // openOCD variables
+        SeerConsoleWidget*                  _openOCDConsoleWidget;
         QString                             _openOCDExePath;
         QString                             _GDBPort;
         QString                             _telnetPort;
@@ -501,5 +509,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbMultiarchCommands;
         QMap<QString, QString>              _kernelSymbolPath;
         QMap<QString, QString>              _kernelModuleSymbolPath;
+        // gdb multiarch variables
+        QString                             _gdbMultiarchProgram;
+        QString                             _gdbMultiarchArguments;
 };
 

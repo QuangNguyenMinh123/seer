@@ -72,7 +72,25 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              styleName                               ();
 
         // openocd get and set functions
-        const QString&              openOCDExePath                          ();
+        // ::Main
+        const QString&                      openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
+        const QString&                      gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString&                      telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        const QString&                      openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        // ::GDB Multiarch
+        const QString&                      gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString&                      gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        // ::Kernel
+        const QString&                      kernelSymbolPath                    ();
+        void                                setKernelSymbolPath                 (const QString& path);
+        const QString&                      kernelCodePath                      ();
+        void                                setKernelCodePath                   (const QString& path);    
     
     private slots:
         void                        handleFileDebug                         ();

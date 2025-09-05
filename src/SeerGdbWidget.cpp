@@ -8,6 +8,7 @@
 #include "SeerImageVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
+#include "SeerOpenOCD.h"
 #include "QHContainerWidget.h"
 #include <QtGui/QFont>
 #include <QtGui/QGuiApplication>
@@ -73,6 +74,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
+
+    // for openOCD gdb-multiarch support
+    _gdbMultiarchProgram                = "/usr/bin/gdb-multiarch";
+    _gdbMultiarchArguments              = "--interpreter=mi";
 
     setIsQuitting(false);
     setNewExecutableFlag(true);
@@ -4156,20 +4161,23 @@ void SeerGdbWidget::delay (int seconds) {
     }
 }
 
-// OpenOCD
+/***********************************************************************************************************************
+ * OpenOCD related getters, setters and handlers                                                                       *
+***********************************************************************************************************************/
 // This is call when Launch in OpenOCD mode, just like function invoked in Run/Attach mode
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
 {
-
+    // Start OpenOCD Session
+    
 }
 // getter and setter, mainly called from SeerMainWindow.cpp
 // ::Main
-void setOpenOcdExePath (const QString& path) {
-    
-}
-
 const QString& SeerGdbWidget::openOCDExePath() {
     return _openOCDExePath;
+}
+
+void SeerGdbWidget::setOpenOCDExePath (const QString& path) {
+    _openOCDExePath = path;
 }
 
 const QString& SeerGdbWidget::gdbPort() {
@@ -4226,4 +4234,9 @@ const QString& SeerGdbWidget::kernelCodePath () {
 
 void SeerGdbWidget::setKernelCodePath (const QString& path){
 
+}
+
+// start gdb-multiarch, return true if success, false otherwise
+bool SeerGdbWidget::startGdbMultiarch() {
+    return true;
 }
