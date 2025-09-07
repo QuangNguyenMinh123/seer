@@ -6,3 +6,4 @@ build-DebugSeer-Desktop-Debug
 Example
 openocd
 libjaylink
+nucleo_blink/
