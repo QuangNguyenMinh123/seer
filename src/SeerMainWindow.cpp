@@ -5,6 +5,7 @@
 #include "SeerAboutDialog.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
+#include "SeerOpenOCDWidget.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QStyleFactory>
@@ -444,6 +445,12 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     // openocd
     actionOpenOCDAttach->setVisible(false);
     menuOpenOCD->setVisible(false);
+    // if OpenOCD tab exists, kill it along with any running OpenOCD process.
+    if (SeerOpenOCDWidget::getOpenOCDWidget() != nullptr) {
+        SeerOpenOCDWidget::getOpenOCDWidget()->killOpenOCD();
+        SeerOpenOCDWidget::getOpenOCDWidget()->killConsole();
+        SeerOpenOCDWidget::setOpenOCDWidget(nullptr) ;
+    }
     if (launchMode == "run") {
 
         gdbWidget->handleGdbRunExecutable(breakMode, false);

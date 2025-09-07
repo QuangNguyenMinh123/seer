@@ -8,31 +8,31 @@
 /***********************************************************************************************************************
  * 
  **********************************************************************************************************************/
-class SeerOpenOCDWidget: public SeerLogWidget{
-    Q_OBJECT
-    public:
-        explicit SeerOpenOCDWidget  (QWidget* parent = 0);
-        ~SeerOpenOCDWidget ();
-        // Start & kill OpenOCD process
-        bool startOpenOCD           (const QString &openocdExe, const QString &command);
-        void killOpenOCD            ();
-        // Create & kill Console displaying OpenOCD process logs
-        bool createConsole          (QDetachTabWidget* parent);
-        bool killConsole            ();
-        void setConsoleVisible      (bool flag);
-        // Getters & Setters
-        bool console                () const;
+namespace SeerOpenOCDWidget{
+    
+    class SeerOpenOCDWidget: public SeerLogWidget{
+        Q_OBJECT
+        public:
+            explicit SeerOpenOCDWidget  (QWidget* parent = 0);
+            ~SeerOpenOCDWidget ();
+            // Start & kill OpenOCD process
+            bool startOpenOCD           (const QString &openocdExe, const QString &command);
+            void killOpenOCD            ();
+            // Create & kill Console displaying OpenOCD process logs
+            bool createConsole          (QDetachTabWidget* parent);
+            bool killConsole            ();
+            void setConsoleVisible      (bool flag);
+            // Getters & Setters
+            void newWidget              ();
 
-    signals:
-        void openocdDisconnect      ();
+        signals:
+            void openocdDisconnect      ();
+            void openocdStartFailed     ();
 
         private slots:
-        void handleReadOutput       ();
-        void handleReadError        ();
-
-    private:
-        QProcess*                       _openocdProcess;
-        QString                         _openocdProgram;
-        QString                         _openocdArguments;
-
-};
+            void handleReadOutput       ();
+            void handleReadError        ();
+    };
+    SeerOpenOCDWidget* getOpenOCDWidget();
+    SeerOpenOCDWidget* setOpenOCDWidget(SeerOpenOCDWidget* widget);
+}

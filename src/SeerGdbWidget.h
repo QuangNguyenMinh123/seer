@@ -399,6 +399,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleConsoleNewTextAdded           ();
         void                                handleConsoleNewTextViewed          ();
         void                                handleAboutToQuit                   ();
+        void                                handleOpenOCDStartFailed            ();
 
     signals:
         void                                stoppingPointReached                ();

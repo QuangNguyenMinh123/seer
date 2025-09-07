@@ -80,8 +80,9 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpRRToolButton,                     &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRRToolButtonClicked);
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
-    // OpenOCD button
+    // OpenOCD
     QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked);
+    QObject::connect(openOCDTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleOpenOCDTabChanged);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -928,8 +929,13 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID = 5   OpenOCD
     if (id == 5) {
-        postCommandsPlainTextEdit->setVisible(false);
-        preCommandsPlainTextEdit->setVisible(false);
+        if (openOCDTabWidget->currentIndex() == 3) {
+            postCommandsPlainTextEdit->setVisible(false);
+            preCommandsPlainTextEdit->setVisible(false);
+        } else {
+            postCommandsPlainTextEdit->setVisible(true);
+            preCommandsPlainTextEdit->setVisible(true);
+        }
     }
 }
 
@@ -1007,6 +1013,9 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
+/***********************************************************************************************************************
+ * OpenOCD Slots                                                                                                       *
+***********************************************************************************************************************/
 // Do this when OpenOCD Tab -> Main -> Default Button clicked
 void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
     QString defaultOpenOCDPath = "/usr/local/bin/openocd";
@@ -1016,7 +1025,21 @@ void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
     openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
     openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
 }
-
+// When OpenOCD Tab changed
+void SeerDebugDialog::handleOpenOCDTabChanged(int id)
+{
+    // When Kernel Module Tab is selected, hide pre/post gdb commands
+    if (id == 3)
+    {
+        postCommandsPlainTextEdit->setVisible(false);
+        preCommandsPlainTextEdit->setVisible(false);
+    }
+    else    // Every other tab selected, show pre/post gdb commands
+    {
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
+    }
+}
 /***********************************************************************************************************************
  * OpenOCD getter and setter from LineEdit                                                                      *
 ***********************************************************************************************************************/
