@@ -488,6 +488,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
         SeerGdbLogWidget*                   _gdbOutputLog;
         SeerSeerLogWidget*                  _seerOutputLog;
+        
 
         GdbMonitor*                         _gdbMonitor;
         QProcess*                           _gdbProcess;

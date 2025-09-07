@@ -8,7 +8,7 @@
 #include "SeerImageVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
-#include "SeerOpenOCD.h"
+#include "SeerOpenOCDWidget.h"
 #include "QHContainerWidget.h"
 #include <QtGui/QFont>
 #include <QtGui/QGuiApplication>
@@ -109,6 +109,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
     logsTabWidget->addTab(_checkpointsBrowserWidget, "Checkpoints");
     logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
+    logsTabWidget->addTab(_seerOutputLog,            "Seer output");
+
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
@@ -4168,7 +4170,11 @@ void SeerGdbWidget::delay (int seconds) {
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
 {
     // Start OpenOCD Session
-    bool foo = SeerOpenOCD::startOpenOCD(openOCDExePath(), openOCDCommand());
+    SeerOpenOCDWidget* newOpenocdSession;
+    newOpenocdSession = new SeerOpenOCDWidget(logsTabWidget); 
+    // Create the OpenOCD console tab
+    newOpenocdSession->createConsole(logsTabWidget);
+    bool foo = newOpenocdSession->startOpenOCD(openOCDExePath(), openOCDCommand());
     if (foo == false) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the OpenOCD program.\n\n") +

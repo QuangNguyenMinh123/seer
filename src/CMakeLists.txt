@@ -152,7 +152,7 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
-    SeerOpenOCD.h
+    SeerOpenOCDWidget.h
     )
 
 set(SOURCE_FILES
@@ -255,7 +255,7 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
-    SeerOpenOCD.cpp
+    SeerOpenOCDWidget.cpp
     seergdb.cpp
     )
 
