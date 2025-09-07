@@ -220,8 +220,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setOpenOCDExePath                   (const QString& path);
         const QString&                      gdbPort                             ();
         void                                setGdbPort                          (const QString& port);
-        const QString&                      telnetPort                          ();
-        void                                setTelnetPort                       (const QString& port);
         const QString&                      openOCDCommand                      ();
         void                                setOpenOCDCommand                   (const QString& command);
         // ::GDB Multiarch
@@ -503,11 +501,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerConsoleWidget*                  _openOCDConsoleWidget;
         QString                             _openOCDExePath;
         QString                             _GDBPort;
-        QString                             _telnetPort;
         QString                             _openOCDCommands;
         QString                             _gdbMultiarchExePath;
         QString                             _gdbMultiarchCommands;
-        QMap<QString, QString>              _kernelSymbolPath;
+        QString                             _kernelSymbolPath;
+        QString                             _kernelCodePath;
         QMap<QString, QString>              _kernelModuleSymbolPath;
         // gdb multiarch variables
         QString                             _gdbMultiarchProgram;

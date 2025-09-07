@@ -526,6 +526,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     QJsonObject   connectModeJson;
     QJsonObject   rrModeJson;
     QJsonObject   corefileModeJson;
+    // openocd mode json
     QJsonObject   openocdModeJson;
     QJsonArray    preConnectCommands;
     QJsonArray    postConnectCommands;
@@ -543,6 +544,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     connectModeJson     = seerProjectJson.value("connectmode").toObject();
     rrModeJson          = seerProjectJson.value("rrmode").toObject();
     corefileModeJson    = seerProjectJson.value("corefilemode").toObject();
+    // openocd mode
     openocdModeJson     = seerProjectJson.value("openocdmode").toObject();
     preConnectCommands  = seerProjectJson.value("pregdbcommands").toArray();
     postConnectCommands = seerProjectJson.value("postgdbcommands").toArray();
@@ -675,7 +677,15 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Load OPENOCD project
     if (openocdModeJson.isEmpty() == false) {
 
-        loadCoreFilenameLineEdit->setText(corefileModeJson["corefile"].toString());
+        executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
+        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
+        openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
+        openOcdGdbMultiarchLineEdit             ->setText(openocdModeJson["gdbMultiarchExe"].toString());
+        openOCDGdbCommandLineEdit               ->setText(openocdModeJson["gdbMultiarchCommand"].toString());
+        openOCDKernelKernelSymbolLineEdit       ->setText(openocdModeJson["kernelSymbolPath"].toString());
+        openOCDKernelKernelDirLineEdit          ->setText(openocdModeJson["kernelCodePath"].toString());
+        openOCDKernelModuleSymbolPathLineEdit   ->setText(openocdModeJson["kernelModuleSymbolPath"].toString());
+        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["kernelModuleCodePath"].toString());
 
         setLaunchMode("openocd");
     }
@@ -800,13 +810,19 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
 
     // Save OpenOCD project.
     if (launchMode() == "openocd") {
-
         QJsonObject modeJson;
 
-        modeJson["openocd"]            = loadCoreFilenameLineEdit->text();
+        modeJson["openocdExe"]              = executableOpenOCDPathLineEdit->text();
+        modeJson["gdbPort"]                 = openOCD_GDB_Port_LineEdit->text();
+        modeJson["openocdCommand"]          = openOCDCommandLineEdit->toPlainText();
+        modeJson["gdbMultiarchExe"]         = openOcdGdbMultiarchLineEdit->text();
+        modeJson["gdbMultiarchCommand"]     = openOCDGdbCommandLineEdit->text();
+        modeJson["kernelSymbolPath"]        = openOCDKernelKernelSymbolLineEdit->text();
+        modeJson["kernelCodePath"]          = openOCDKernelKernelDirLineEdit->text();
+        modeJson["kernelModuleSymbolPath"]  = openOCDKernelModuleSymbolPathLineEdit->text();
+        modeJson["kernelModuleCodePath"]    = openOCD_GDB_Port_LineEdit->text();
 
-        seerProjectJson["corefilemode"] = modeJson;
-        QMessageBox::information(this, "Note", QString("OpenOCD project"));
+        seerProjectJson["openocdmode"] = modeJson;
     }
 
     rootJson["seerproject"] = seerProjectJson;
@@ -854,6 +870,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"run\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"run\"");
     }
@@ -866,6 +884,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"attach\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"attach\"");
     }
@@ -878,6 +898,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }
@@ -886,6 +908,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR trace-directory load\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR trace-directory load\"");
     }
@@ -896,13 +920,16 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
     }
 
     // ID = 5   OpenOCD
     if (id == 5) {
-
+        postCommandsPlainTextEdit->setVisible(false);
+        preCommandsPlainTextEdit->setVisible(false);
     }
 }
 
@@ -980,51 +1007,20 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
-// OpenOCD Code
-// OpenOCD tab: main
-// Set OpenOCD executable path
-// void SeerDebugDialog::setOpenOCDMainExePath(const QString& path){
-
-// }
-// // Read OpenOCD executable path
-// QString SeerDebugDialog::openOCDMainExePath() const{
-//     return "";
-// }
-
-// void SeerDebugDialog::setOpenOCDMainGDBPort() {
-
-// }
-
-// QString SeerDubgDialog::openOCDMainGDBPort() {
-
-// }
-
-// void SeerDebugDialog::setOpenOCDMainTelnetPort() {
-
-// }
-
-// QString SeerDubgDialog::OpenOCDMainTelnetPort() {
-
-// }
-
 // Do this when OpenOCD Tab -> Main -> Default Button clicked
 void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
     QString defaultOpenOCDPath = "/usr/local/bin/openocd";
     QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
     QString defaultGDBPort = "3333";
-    QString defaultTelnetPort = "4444";
     executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
     openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
     openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
-    openOCD_Telnet_Port_LineEdit->setText(defaultTelnetPort);
 }
 
 /***********************************************************************************************************************
  * OpenOCD getter and setter from LineEdit                                                                      *
 ***********************************************************************************************************************/
 const QString SeerDebugDialog::openOCDExePath() {
-    QString path = executableOpenOCDPathLineEdit->text();
-    path += ""; // avoid compiler warning
     return executableOpenOCDPathLineEdit->text();
 }
 
@@ -1039,20 +1035,15 @@ const QString SeerDebugDialog::gdbPort() {
 void SeerDebugDialog::setGdbPort (const QString& port){
     openOCD_GDB_Port_LineEdit->setText(port);
 }
-const QString SeerDebugDialog::telnetPort() {
-    return openOCD_Telnet_Port_LineEdit->text();
-}
-
-void SeerDebugDialog::setTelnetPort (const QString& port){
-    openOCD_Telnet_Port_LineEdit->setText(port);
-}
 
 const QString SeerDebugDialog::openOCDCommand() {
-    return openOCDCommandLineEdit->text();
+    QString tmp = openOCDCommandLineEdit->toPlainText();
+    tmp.replace("\n", " ");
+    return tmp;
 }
 
 void SeerDebugDialog::setOpenOCDCommand (const QString& command){
-    openOCDCommandLineEdit->setText(command);
+    openOCDCommandLineEdit->setPlainText(command);
 }
 
 // ::GDB Multiarch

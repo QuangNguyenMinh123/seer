@@ -615,7 +615,6 @@ void SeerMainWindow::handleFileDebug () {
     // read openocd variables
     setOpenOCDExePath(dlg.openOCDExePath());
     setGdbPort(dlg.gdbPort());
-    setTelnetPort(dlg.telnetPort());
     setOpenOCDCommand(dlg.openOCDCommand());
     setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
     setKernelSymbolPath(dlg.kernelSymbolPath());
@@ -1824,13 +1823,6 @@ const QString& SeerMainWindow::gdbPort() {
 
 void SeerMainWindow::setGdbPort (const QString& port){
     gdbWidget->setGdbPort(port);
-}
-const QString& SeerMainWindow::telnetPort() {
-    return gdbWidget->telnetPort();
-}
-
-void SeerMainWindow::setTelnetPort (const QString& port){
-    gdbWidget->setTelnetPort(port);
 }
 
 const QString& SeerMainWindow::openOCDCommand() {

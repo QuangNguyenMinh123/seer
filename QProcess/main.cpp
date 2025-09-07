@@ -39,8 +39,8 @@ private slots:
             outputBox->append("Starting OpenOCD...");
             QString program = "openocd";
             QStringList args;
-            args << "-f" << "interface/ftdi/olimex-arm-usb-ocd-h.cfg"
-                 << "-f" << "target/stm32f4x.cfg";
+            args << "-f" << "/home/quangnm/Documents/GitHub/seer/openocd/tcl/interface/jlink.cfg"
+                 << "-f" << "/home/quangnm/Documents/GitHub/seer/openocd/tcl/target/stm32f4x.cfg";
 
             process->start(program, args);
         } else {

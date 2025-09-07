@@ -77,8 +77,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                                setOpenOCDExePath                   (const QString& path);
         const QString&                      gdbPort                             ();
         void                                setGdbPort                          (const QString& port);
-        const QString&                      telnetPort                          ();
-        void                                setTelnetPort                       (const QString& port);
         const QString&                      openOCDCommand                      ();
         void                                setOpenOCDCommand                   (const QString& command);
         // ::GDB Multiarch

@@ -4168,6 +4168,15 @@ void SeerGdbWidget::delay (int seconds) {
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
 {
     // Start OpenOCD Session
+    bool foo = SeerOpenOCD::startOpenOCD(openOCDExePath(), openOCDCommand());
+    if (foo == false) {
+        QMessageBox::warning(this, "Seer",
+                                   QString("Unable to launch the OpenOCD program.\n\n") +
+                                   QString("'%1 %2'").arg(SeerGdbWidget::openOCDExePath()).arg(SeerGdbWidget::openOCDCommand()) + "\n\n" +
+                                   QString("Please check your OpenOCD configuration."),
+                                   QMessageBox::Ok);
+        return;
+    }
     
 }
 // getter and setter, mainly called from SeerMainWindow.cpp
@@ -4187,16 +4196,9 @@ const QString& SeerGdbWidget::gdbPort() {
 void SeerGdbWidget::setGdbPort (const QString& port){
     _GDBPort = port;
 }
-const QString& SeerGdbWidget::telnetPort() {
-    return _telnetPort;
-}
-
-void SeerGdbWidget::setTelnetPort (const QString& port){
-    _telnetPort = port;
-}
 
 const QString& SeerGdbWidget::openOCDCommand() {
-
+    return _openOCDCommands;
 }
 
 void SeerGdbWidget::setOpenOCDCommand (const QString& command){
@@ -4221,19 +4223,19 @@ void SeerGdbWidget::setGdbMultiarchCommand (const QString& command) {
 }
 // ::Kernel
 const QString& SeerGdbWidget::kernelSymbolPath () {
-    return "abc";
+    return _kernelSymbolPath;
 }
 
 void SeerGdbWidget::setKernelSymbolPath (const QString& path){
-
+    _kernelSymbolPath = path;
 }
 
 const QString& SeerGdbWidget::kernelCodePath () {
-    return "abc";
+    return _kernelCodePath;
 }
 
 void SeerGdbWidget::setKernelCodePath (const QString& path){
-
+    _kernelCodePath = path;
 }
 
 // start gdb-multiarch, return true if success, false otherwise
