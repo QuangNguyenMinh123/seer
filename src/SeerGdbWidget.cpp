@@ -4166,32 +4166,6 @@ void SeerGdbWidget::delay (int seconds) {
 }
 
 /***********************************************************************************************************************
- * slot                                                                                                                *
-***********************************************************************************************************************/
-// This is call when Launch in OpenOCD mode, just like function invoked in Run/Attach mode
-void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
-{
-    // Start OpenOCD Session
-    SeerOpenOCDWidget::SeerOpenOCDWidget* newOpenocdSession = new SeerOpenOCDWidget::SeerOpenOCDWidget(logsTabWidget);
-    SeerOpenOCDWidget::setOpenOCDWidget(newOpenocdSession); 
-    // Create the OpenOCD console tab
-    newOpenocdSession->createConsole(logsTabWidget);
-    bool foo = newOpenocdSession->startOpenOCD(openOCDExePath(), openOCDCommand());
-    if (foo == false) {
-        QMessageBox::warning(this, "Seer",
-                                   QString("Unable to launch the OpenOCD program.\n\n") +
-                                   QString("'%1 %2'").arg(SeerGdbWidget::openOCDExePath()).arg(SeerGdbWidget::openOCDCommand()) + "\n\n" +
-                                   QString("Please check your OpenOCD configuration."),
-                                   QMessageBox::Ok);
-        return;
-    }
-}
-
-void SeerGdbWidget::handleOpenOCDStartFailed()
-{
-    logsTabWidget->setCurrentIndex(7); // Switch to console tab
-}
-/***********************************************************************************************************************
  * OpenOCD related getters, setters and handlers                                                                       *
 ***********************************************************************************************************************/
 // getter and setter, mainly called from SeerMainWindow.cpp
@@ -4251,6 +4225,33 @@ const QString& SeerGdbWidget::kernelCodePath () {
 
 void SeerGdbWidget::setKernelCodePath (const QString& path){
     _kernelCodePath = path;
+}
+
+/***********************************************************************************************************************
+ * slot                                                                                                                *
+***********************************************************************************************************************/
+// This is call when Launch in OpenOCD mode, just like function invoked in Run/Attach mode
+void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
+{
+    // Start OpenOCD Session
+    SeerOpenOCDWidget::SeerOpenOCDWidget* newOpenocdSession = new SeerOpenOCDWidget::SeerOpenOCDWidget(logsTabWidget);
+    SeerOpenOCDWidget::setOpenOCDWidget(newOpenocdSession); 
+    // Create the OpenOCD console tab
+    newOpenocdSession->createConsole(logsTabWidget);
+    bool foo = newOpenocdSession->startOpenOCD(openOCDExePath(), openOCDCommand());
+    if (foo == false) {
+        QMessageBox::warning(this, "Seer",
+                                   QString("Unable to launch the OpenOCD program.\n\n") +
+                                   QString("'%1 %2'").arg(SeerGdbWidget::openOCDExePath()).arg(SeerGdbWidget::openOCDCommand()) + "\n\n" +
+                                   QString("Please check your OpenOCD configuration."),
+                                   QMessageBox::Ok);
+        return;
+    }
+}
+
+void SeerGdbWidget::handleOpenOCDStartFailed()
+{
+    logsTabWidget->setCurrentIndex(7); // Switch to console tab
 }
 
 // start gdb-multiarch, return true if success, false otherwise

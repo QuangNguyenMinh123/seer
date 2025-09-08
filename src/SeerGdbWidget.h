@@ -500,7 +500,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // openOCD variables
-        SeerConsoleWidget*                  _openOCDConsoleWidget;
         QString                             _openOCDExePath;
         QString                             _GDBPort;
         QString                             _openOCDCommands;
