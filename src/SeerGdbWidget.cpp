@@ -426,7 +426,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
     // openocd: if OpenOCD failed to start because the port is already in use, run handleOpenOCDStartFailed
-    QObject::connect(SeerOpenOCDWidget::getOpenOCDWidget(),                     &SeerOpenOCDWidget::SeerOpenOCDWidget::openocdStartFailed,                                  this,                                                           &SeerGdbWidget::handleOpenOCDStartFailed);
+    // QObject::connect(SeerOpenOCDWidgetNp::getOpenOCDWidget(),                   &SeerOpenOCDWidget::SeerOpenOCDWidget::openocdStartFailed,                                  this,                                                           &SeerGdbWidget::handleOpenOCDStartFailed);
     // Restore window settings.
     readSettings();
 }
@@ -4234,8 +4234,8 @@ void SeerGdbWidget::setKernelCodePath (const QString& path){
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
 {
     // Start OpenOCD Session
-    SeerOpenOCDWidget::SeerOpenOCDWidget* newOpenocdSession = new SeerOpenOCDWidget::SeerOpenOCDWidget(logsTabWidget);
-    SeerOpenOCDWidget::setOpenOCDWidget(newOpenocdSession); 
+    SeerOpenOCDWidget* newOpenocdSession = new SeerOpenOCDWidget(logsTabWidget);
+    SeerOpenOCDWidgetNp::setOpenOCDWidget(newOpenocdSession); 
     // Create the OpenOCD console tab
     newOpenocdSession->createConsole(logsTabWidget);
     bool foo = newOpenocdSession->startOpenOCD(openOCDExePath(), openOCDCommand());
@@ -4247,6 +4247,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoi
                                    QMessageBox::Ok);
         return;
     }
+
 }
 
 void SeerGdbWidget::handleOpenOCDStartFailed()

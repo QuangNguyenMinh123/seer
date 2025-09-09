@@ -446,11 +446,15 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionOpenOCDAttach->setVisible(false);
     menuOpenOCD->setVisible(false);
     // if OpenOCD tab exists, kill it along with any running OpenOCD process.
-    if (SeerOpenOCDWidget::getOpenOCDWidget() != nullptr) {
-        SeerOpenOCDWidget::getOpenOCDWidget()->killOpenOCD();
-        SeerOpenOCDWidget::getOpenOCDWidget()->killConsole();
-        SeerOpenOCDWidget::setOpenOCDWidget(nullptr) ;
+    if (SeerOpenOCDWidgetNp::getOpenOCDWidget() != nullptr) {
+        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killOpenOCD();
+        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killConsole();
+        SeerOpenOCDWidgetNp::setOpenOCDWidget(nullptr) ;
     }
+
+    // As new session is started, kill any existing gdb process
+    gdbWidget->handleGdbShutdown();
+
     if (launchMode == "run") {
 
         gdbWidget->handleGdbRunExecutable(breakMode, false);
@@ -492,8 +496,6 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionOpenOCDAttach->setVisible(true);
         // launch gdb with openocd
         gdbWidget->handleGdbMultiarchOpenOCDExecutable(false);
-
-        QMessageBox::information(this, "OpenOCD Debugging", "OpenOCD Debugging is started.", QMessageBox::Ok);
 
     }else if (launchMode == "project") {
 
@@ -648,7 +650,10 @@ void SeerMainWindow::handleFileArguments () {
 void SeerMainWindow::handleFileQuit () {
 
     gdbWidget->handleGdbShutdown();
-
+    // To be sure, if OpenOCD is running, kill it before terminate window.
+    if (SeerOpenOCDWidgetNp::getOpenOCDWidget() != nullptr) {
+        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killOpenOCD();
+    }
     QCoreApplication::exit(0);
 }
 

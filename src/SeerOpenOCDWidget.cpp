@@ -4,12 +4,12 @@
 #include <QtCore/QProcess>
 #include <QMessageBox>
 
-namespace SeerOpenOCDWidget{
     static QProcess* _openocdProcess;
     static QString _openocdProgram;
     static QString _openocdArguments;
     SeerLogWidget* _openocdlogsTabWidget;
     static SeerOpenOCDWidget* self = nullptr;
+namespace SeerOpenOCDWidgetNp{
     SeerOpenOCDWidget* getOpenOCDWidget() {
         return self;
     }
@@ -17,6 +17,7 @@ namespace SeerOpenOCDWidget{
         self = widget;
         return self;
     }
+}
     /***********************************************************************************************************************
      * Constructor & Destructor                                                                                           *
     ***********************************************************************************************************************/
@@ -109,6 +110,4 @@ namespace SeerOpenOCDWidget{
         _openocdlogsTabWidget->handleText(Text);
     }
 
-    // If OpenOCD failed to start because the port is already in use, emit openocdTerminate signal
 
-}

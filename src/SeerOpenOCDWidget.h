@@ -8,7 +8,7 @@
 /***********************************************************************************************************************
  * 
  **********************************************************************************************************************/
-namespace SeerOpenOCDWidget{
+
     
     class SeerOpenOCDWidget: public SeerLogWidget{
         Q_OBJECT
@@ -33,6 +33,7 @@ namespace SeerOpenOCDWidget{
             void handleReadOutput       ();
             void handleReadError        ();
     };
+namespace SeerOpenOCDWidgetNp{
     SeerOpenOCDWidget* getOpenOCDWidget();
     SeerOpenOCDWidget* setOpenOCDWidget(SeerOpenOCDWidget* widget);
 }

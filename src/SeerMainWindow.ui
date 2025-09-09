@@ -16,7 +16,18 @@
   <property name="windowTitle">
    <string>Seer Debugger</string>
   </property>
-  <widget class="SeerGdbWidget" name="gdbWidget"/>
+  <widget class="SeerGdbWidget" name="gdbWidget">
+   <widget class="SeerOpenOCDWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>650</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -768,7 +779,7 @@
   <action name="actionOpenOCDImport_Project">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/icons-icons/import.png</normaloff>:/seer/resources/icons-icons/import.jpg</iconset>
+     <normaloff>:/seer/resources/icons-icons/import.png</normaloff>:/seer/resources/icons-icons/import.png</iconset>
    </property>
    <property name="text">
     <string>Import Project</string>
@@ -804,12 +815,7 @@
     <string extracomment="OpenOCD connect to target"/>
    </property>
    <property name="font">
-    <font>
-     <weight>50</weight>
-     <bold>false</bold>
-     <underline>false</underline>
-     <kerning>true</kerning>
-    </font>
+    <font/>
    </property>
    <property name="visible">
     <bool>true</bool>
@@ -821,6 +827,12 @@
    <class>SeerGdbWidget</class>
    <extends>QWidget</extends>
    <header>SeerGdbWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SeerOpenOCDWidget</class>
+   <extends>QWidget</extends>
+   <header>SeerOpenOCDWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
