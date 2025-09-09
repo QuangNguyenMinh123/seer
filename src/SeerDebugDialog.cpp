@@ -81,8 +81,11 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
     // OpenOCD
-    QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked);
+    QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDDefaultButtonClicked);
     QObject::connect(openOCDTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleOpenOCDTabChanged);
+    QObject::connect(executableOpenOCDButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableOpenOCDButtonClicked);
+    QObject::connect(openOCDKernelKernelSymbolPathButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDKernelSymbolPathButtonClicked);
+    QObject::connect(openOCDKernelKernelDirPathButton,     &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDKernelDirPathButton);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -1014,33 +1017,6 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
 }
 
 /***********************************************************************************************************************
- * OpenOCD Slots                                                                                                       *
-***********************************************************************************************************************/
-// Do this when OpenOCD Tab -> Main -> Default Button clicked
-void SeerDebugDialog::handleOpenOCDMainDefaultButtonClicked() {
-    QString defaultOpenOCDPath = "/usr/local/bin/openocd";
-    QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
-    QString defaultGDBPort = "3333";
-    executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
-    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
-    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
-}
-// When OpenOCD Tab changed
-void SeerDebugDialog::handleOpenOCDTabChanged(int id)
-{
-    // When Kernel Module Tab is selected, hide pre/post gdb commands
-    if (id == 3)
-    {
-        postCommandsPlainTextEdit->setVisible(false);
-        preCommandsPlainTextEdit->setVisible(false);
-    }
-    else    // Every other tab selected, show pre/post gdb commands
-    {
-        postCommandsPlainTextEdit->setVisible(true);
-        preCommandsPlainTextEdit->setVisible(true);
-    }
-}
-/***********************************************************************************************************************
  * OpenOCD getter and setter from LineEdit                                                                      *
 ***********************************************************************************************************************/
 const QString SeerDebugDialog::openOCDExePath() {
@@ -1100,4 +1076,55 @@ const QString SeerDebugDialog::kernelCodePath () {
 
 void SeerDebugDialog::setKernelCodePath (const QString& path){
     openOCDKernelKernelDirLineEdit->setText(path);
+}
+/***********************************************************************************************************************
+ * OpenOCD Slots                                                                                                       *
+***********************************************************************************************************************/
+// Do this when OpenOCD Tab -> Main -> Default Button clicked
+void SeerDebugDialog::handleOpenOCDDefaultButtonClicked() {
+    QString defaultOpenOCDPath = "/usr/local/bin/openocd";
+    QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
+    QString defaultGDBPort = "3333";
+    executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
+    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
+    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
+}
+// When OpenOCD Tab changed
+void SeerDebugDialog::handleOpenOCDTabChanged(int id)
+{
+    // When Kernel Module Tab is selected, hide pre/post gdb commands
+    if (id == 3)
+    {
+        postCommandsPlainTextEdit->setVisible(false);
+        preCommandsPlainTextEdit->setVisible(false);
+    }
+    else    // Every other tab selected, show pre/post gdb commands
+    {
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
+    }
+}
+
+void SeerDebugDialog::handleExecutableOpenOCDButtonClicked () {
+    QString name = QFileDialog::getOpenFileName(this, "Select OpenOCD executable.", openOCDExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setOpenOCDExePath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDKernelSymbolPathButtonClicked () {
+    QString name = QFileDialog::getOpenFileName(this, "Select vmlinuz Kernel Symbol.", kernelSymbolPath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setKernelSymbolPath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDKernelDirPathButton () {
+    QString name = QFileDialog::getExistingDirectory(this, "Select kernel source code directory.", kernelCodePath(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setKernelCodePath(name);
+    }
 }

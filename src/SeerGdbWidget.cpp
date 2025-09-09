@@ -35,6 +35,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "ui_SeerGdbWidget.h"
 static QLoggingCategory LC("seer.gdbwidget");
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
@@ -4227,18 +4228,20 @@ void SeerGdbWidget::setKernelCodePath (const QString& path){
     _kernelCodePath = path;
 }
 
+SeerOpenOCDWidget* SeerGdbWidget::openOCDWidgetInstance() {
+    return openocdWidget;
+}
 /***********************************************************************************************************************
  * slot                                                                                                                *
 ***********************************************************************************************************************/
 // This is call when Launch in OpenOCD mode, just like function invoked in Run/Attach mode
-void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoints)
+void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
 {
-    // Start OpenOCD Session
-    SeerOpenOCDWidget* newOpenocdSession = new SeerOpenOCDWidget(logsTabWidget);
-    SeerOpenOCDWidgetNp::setOpenOCDWidget(newOpenocdSession); 
-    // Create the OpenOCD console tab
-    newOpenocdSession->createConsole(logsTabWidget);
-    bool foo = newOpenocdSession->startOpenOCD(openOCDExePath(), openOCDCommand());
+    // Create the OpenOCD console tab, add to the log tabs
+    openocdWidget->createOpenOCDConsole(logsTabWidget);
+    // logsTabWidget->addTab(openocdWidget->openocdConsole(), "OpenOCD output");
+    // Start OpenOCD with the given path and command
+    bool foo = openocdWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
     if (foo == false) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the OpenOCD program.\n\n") +
@@ -4247,6 +4250,98 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable(bool loadSessionBreakpoi
                                    QMessageBox::Ok);
         return;
     }
+    // Now, set _gdbProgram as gdb-multiarch, provided by openocd launch mode
+    setGdbProgram(gdbMultiarchExePath());
+    // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
+    qCDebug(LC) << "Starting 'openocd gdb-multiarch connect'";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        _executableBreakMode = "";
+
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
+
+        // Disconnect from the terminal and delete the old gdb if there is a new executable.
+        // if (newExecutableFlag() == true) {
+        //     console()->deleteTerminal();
+        //     killGdb();
+        // }
+
+        // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+
+            handleGdbLoadMICommands();
+            handleGdbSourceScripts();
+        }
+
+        // No console for 'connect' mode but make sure it's reattached.
+        setExecutableLaunchMode("connect");
+        saveLaunchMode();
+        setGdbRecordMode("auto");
+        setExecutablePid(0);
+        reattachConsole();
+
+        // Load any 'pre' commands.
+        if (newExecutableFlag() == true) {
+            if (gdbServerDebug()) {
+                handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
+            }else{
+                handleGdbCommand("-gdb-set debug remote 0");
+            }
+        }
+        setGdbRemoteTargetType("extended-remote");
+
+        // Connect to the remote gdbserver using the proper remote type.
+        handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(gdbPort()));
+
+        // Load the executable, if needed.
+        if (newExecutableFlag() == true) {
+            // handleGdbExecutableName();
+            handleGdbCommand(QString("-file-exec-and-symbols ") + kernelSymbolPath());
+            handleGdbExecutableSources();           // Load the program source files. gdb-multiarch keeps
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running. gdb-multiarch keeps
+
+            setNewExecutableFlag(false);
+        }
+
+        // Set or reset some things.
+        handleGdbCommand(QString("-environment-cd ") + kernelCodePath());
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session"));
+
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
+
+        break;
+    }
+
+    QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb-multiarch connect'.";
 
 }
 

@@ -8,32 +8,33 @@
 /***********************************************************************************************************************
  * 
  **********************************************************************************************************************/
+class SeerOpenOCDWidget: public SeerLogWidget{
+    Q_OBJECT
+    public:
+        explicit SeerOpenOCDWidget          (QWidget* parent = 0);
+        ~SeerOpenOCDWidget                  ();
+        // Start & kill OpenOCD process
+        bool startOpenOCD                   (const QString &openocdExe, const QString &command);
+        void killOpenOCD                    ();
+        bool isOpenocdRunning               ();
+        // Create & kill Console displaying OpenOCD process logs
+        void createOpenOCDConsole           (QDetachTabWidget* parent);
+        void killConsole                    ();
+        void setConsoleVisible              (bool flag);
+        // Getters & Setters
+        SeerLogWidget* openocdConsole              ();
+        SeerOpenOCDWidget* getOpenOCDWidget ();
+        SeerOpenOCDWidget* setOpenOCDWidget (SeerOpenOCDWidget* widget);
+    signals:
+        void openocdDisconnect              ();
+        void openocdStartFailed             ();
 
-    
-    class SeerOpenOCDWidget: public SeerLogWidget{
-        Q_OBJECT
-        public:
-            explicit SeerOpenOCDWidget  (QWidget* parent = 0);
-            ~SeerOpenOCDWidget ();
-            // Start & kill OpenOCD process
-            bool startOpenOCD           (const QString &openocdExe, const QString &command);
-            void killOpenOCD            ();
-            // Create & kill Console displaying OpenOCD process logs
-            bool createConsole          (QDetachTabWidget* parent);
-            bool killConsole            ();
-            void setConsoleVisible      (bool flag);
-            // Getters & Setters
-            void newWidget              ();
+    private slots:
+        void handleReadOutput               ();
+        void handleReadError                ();
 
-        signals:
-            void openocdDisconnect      ();
-            void openocdStartFailed     ();
-
-        private slots:
-            void handleReadOutput       ();
-            void handleReadError        ();
-    };
-namespace SeerOpenOCDWidgetNp{
-    SeerOpenOCDWidget* getOpenOCDWidget();
-    SeerOpenOCDWidget* setOpenOCDWidget(SeerOpenOCDWidget* widget);
-}
+    private:
+        QProcess*                           _openocdProcess;
+        QString                             _openocdArguments;
+        SeerLogWidget*                      _openocdlogsTabWidget;
+};

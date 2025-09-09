@@ -60,7 +60,6 @@ void GdbMonitor::handleReadyReadStandardError () {
 }
 
 void GdbMonitor::handleReadyReadStandardOutput () {
-    static int i=0;
     qCDebug(LC) << "Ready to read stdout";
 
     QProcess* p = (QProcess*)sender();
@@ -87,11 +86,6 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 
         // Start broadcasting it around.
         emit allTextOutput(text);
-        i++;
-        // at i = 63, display message Program started. (pid = ...)
-        // at i = 80, source core is displayed, so we will stop at 79
-        if (i == 79)    
-            i = i;
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {

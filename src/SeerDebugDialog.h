@@ -111,8 +111,11 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleRunModeChanged                            (int id);
 
         // OpenOCD button handler
-        void                    handleOpenOCDMainDefaultButtonClicked           ();
+        void                    handleOpenOCDDefaultButtonClicked               ();
         void                    handleOpenOCDTabChanged                         (int id);
+        void                    handleExecutableOpenOCDButtonClicked            ();
+        void                    handleOpenOCDKernelSymbolPathButtonClicked      ();
+        void                    handleOpenOCDKernelDirPathButton                ();
 
     private slots:
         void                    handleHelpModeToolButtonClicked                 ();

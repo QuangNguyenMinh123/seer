@@ -446,10 +446,10 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionOpenOCDAttach->setVisible(false);
     menuOpenOCD->setVisible(false);
     // if OpenOCD tab exists, kill it along with any running OpenOCD process.
-    if (SeerOpenOCDWidgetNp::getOpenOCDWidget() != nullptr) {
-        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killOpenOCD();
-        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killConsole();
-        SeerOpenOCDWidgetNp::setOpenOCDWidget(nullptr) ;
+    if (gdbWidget->openOCDWidgetInstance()->isOpenocdRunning() == true) {
+        gdbWidget->openOCDWidgetInstance()->killOpenOCD();
+        gdbWidget->openOCDWidgetInstance()->killConsole();
+        gdbWidget->setGdbProgram("/usr/bin/gdb");
     }
 
     // As new session is started, kill any existing gdb process
@@ -494,8 +494,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         // display attach button
         // menubar->actionOpenOCD->setVisible(true);
         actionOpenOCDAttach->setVisible(true);
-        // launch gdb with openocd
-        gdbWidget->handleGdbMultiarchOpenOCDExecutable(false);
+        // launch gdb-multiarch and openocd
+        gdbWidget->handleGdbMultiarchOpenOCDExecutable();
 
     }else if (launchMode == "project") {
 
@@ -623,8 +623,9 @@ void SeerMainWindow::handleFileDebug () {
 
     // read openocd variables
     setOpenOCDExePath(dlg.openOCDExePath());
-    setGdbPort(dlg.gdbPort());
     setOpenOCDCommand(dlg.openOCDCommand());
+    setGdbMultiarchExePath(dlg.gdbMultiarchExePath());
+    setGdbPort(dlg.gdbPort());
     setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
     setKernelSymbolPath(dlg.kernelSymbolPath());
     setKernelCodePath(dlg.kernelCodePath());
@@ -650,10 +651,6 @@ void SeerMainWindow::handleFileArguments () {
 void SeerMainWindow::handleFileQuit () {
 
     gdbWidget->handleGdbShutdown();
-    // To be sure, if OpenOCD is running, kill it before terminate window.
-    if (SeerOpenOCDWidgetNp::getOpenOCDWidget() != nullptr) {
-        SeerOpenOCDWidgetNp::getOpenOCDWidget()->killOpenOCD();
-    }
     QCoreApplication::exit(0);
 }
 

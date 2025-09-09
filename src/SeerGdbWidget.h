@@ -215,6 +215,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         const QString&                      backupLaunchMode                    () const;
 
         // OpenOCD
+        SeerOpenOCDWidget*                  openOCDWidgetInstance               ();
         // ::Main
         const QString&                      openOCDExePath                      ();
         void                                setOpenOCDExePath                   (const QString& path);
@@ -253,7 +254,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbRRExecutable               (bool loadSessionBreakpoints);
         void                                handleGdbCoreFileExecutable         ();
         // openocd gdb-multiarch support
-        void                                handleGdbMultiarchOpenOCDExecutable (bool loadSessionBreakpoints);
+        void                                handleGdbMultiarchOpenOCDExecutable ();
         void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -500,6 +501,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // openOCD variables
+        
         QString                             _openOCDExePath;
         QString                             _GDBPort;
         QString                             _openOCDCommands;
