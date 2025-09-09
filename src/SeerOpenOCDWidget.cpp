@@ -43,6 +43,7 @@ void SeerOpenOCDWidget::killOpenOCD ()
     if (_openocdProcess->state() == QProcess::Running) {
         _openocdProcess->kill();
         _openocdProcess->waitForFinished();
+        delete _openocdProcess;
     }
 }
 
@@ -97,10 +98,12 @@ void SeerOpenOCDWidget::handleReadError ()
 {
     QString Text = QString::fromLocal8Bit(_openocdProcess->readAllStandardError());
     // If OpenOCD fails to start because the port is already in use, emit openocdTerminate signal
-    if (Text.contains("Error: couldn't bind tcl to socket on port"))
+    if (Text.contains("Error: couldn't bind tcl to socket on port") || \
+        Text.contains("Error: JTAG scan chain interrogation failed: all zeroes") || \
+        Text.contains("Error: Invalid ACK (0) in DAP response") || \
+        Text.contains("Error: Receiving data from device timed out"))
     {
-        QMessageBox::warning(nullptr, QObject::tr("Seer"), QObject::tr("OpenOCD failed to start because the port is already in use. \
-            \nCheck openOCD output for details."));
+        QMessageBox::warning(nullptr, QObject::tr("Seer"), QObject::tr("OpenOCD failed to start. \nCheck openOCD output for details."));
         killOpenOCD();
         emit openocdStartFailed();
     }

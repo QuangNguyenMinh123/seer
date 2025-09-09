@@ -409,6 +409,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                assemblyConfigChanged               ();
         void                                recordSettingsChanged               ();
         void                                stateChanged                        ();
+        //openocd
+        void                                allTextOutput                       (const QString& text);
 
     protected:
         void                                writeLogsSettings                   ();

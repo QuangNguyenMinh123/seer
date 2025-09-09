@@ -428,6 +428,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // openocd: if OpenOCD failed to start because the port is already in use, run handleOpenOCDStartFailed
     // QObject::connect(SeerOpenOCDWidgetNp::getOpenOCDWidget(),                   &SeerOpenOCDWidget::SeerOpenOCDWidget::openocdStartFailed,                                  this,                                                           &SeerGdbWidget::handleOpenOCDStartFailed);
+    // For debuging
+    QObject::connect(this,                                                      &SeerGdbWidget::allTextOutput,                                                               _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                               _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
     // Restore window settings.
     readSettings();
 }
@@ -1034,10 +1037,11 @@ void SeerGdbWidget::handleGdbCommand (const QString& command) {
     QString str = command + "\n";    // Ensure there's a trailing RETURN.
 
     QByteArray bytes = str.toUtf8(); // 8-bit Unicode Transformation Format
-
+    // for debugging openocd only
+    emit allTextOutput("From Widget:" + str);
     _gdbProcess->write(bytes);       // Send the data into the stdin stream of the bash child process
 }
-
+// 0x5555561bb180
 void SeerGdbWidget::handleGdbExit () {
 
     handleGdbCommand("-gdb-exit");
@@ -2212,7 +2216,7 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
         return;
     }
 
-    handleGdbCommand("-break-insert " + breakpoint);
+    handleGdbCommand("-break-insert -h " + breakpoint);
     handleGdbGenericpointList();
 }
 

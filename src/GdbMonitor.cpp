@@ -55,7 +55,7 @@ void GdbMonitor::handleReadyReadStandardError () {
         qCDebug(LC) << text;
 
         // Start broadcasting it around.
-        emit allTextOutput(text);
+        emit allTextOutput("from gdbmonitor: " + text + "\n");
     }
 }
 
@@ -85,7 +85,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         qCDebug(LC) << text;
 
         // Start broadcasting it around.
-        emit allTextOutput(text);
+        emit allTextOutput("from gdbmonitor: " + text + "\n");
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {
@@ -121,7 +121,7 @@ void GdbMonitor::handleTextOutput (QString text) {
     qCDebug(LC) << "Ready to handle text output";
     qCDebug(LC) << text;
 
-    emit allTextOutput(text);
+    emit allTextOutput("from gdbmonitor: " + text + "\n");
 
     if (text[0] == '~') {
         emit tildeTextOutput(text);
