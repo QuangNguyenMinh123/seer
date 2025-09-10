@@ -629,6 +629,7 @@ void SeerMainWindow::handleFileDebug () {
     setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
     setKernelSymbolPath(dlg.kernelSymbolPath());
     setKernelCodePath(dlg.kernelCodePath());
+    gdbWidget->setGdbMultiarchPid(0);           // clear current gdb-multiarch pid
 
     launchExecutable(launchMode, breakMode);
 }

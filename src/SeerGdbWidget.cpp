@@ -4150,12 +4150,25 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
         handleGdbCommand("-exec-interrupt");
 
     }else{
-        int stat = kill(executablePid(), signal);
-        if (stat < 0) {
-            QMessageBox::warning(this, "Seer",
-                                       QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
-                                       QMessageBox::Ok);
+        if (gdbProgram() == gdbMultiarchExePath() && _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
+        {
+            int stat = kill(_gdbmultiarchPid, signal);
+            if (stat < 0) {
+                QMessageBox::warning(this, "Seer",
+                                        QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
+                                        QMessageBox::Ok);
+            }
         }
+        else
+        {
+            int stat = kill(executablePid(), signal);
+            if (stat < 0) {
+                QMessageBox::warning(this, "Seer",
+                                        QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
+                                        QMessageBox::Ok);
+            }
+        }
+        
     }
 }
 
@@ -4284,7 +4297,8 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
-
+            handleGdbCommand("-gdb-set mi-async on");
+            handleGdbCommand("-gdb-set non-stop off");
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
@@ -4293,7 +4307,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
         setExecutableLaunchMode("connect");
         saveLaunchMode();
         setGdbRecordMode("auto");
-        setExecutablePid(0);
+        setGdbMultiarchPid(_gdbProcess->processId());
         reattachConsole();
 
         // Load any 'pre' commands.
@@ -4357,4 +4371,12 @@ void SeerGdbWidget::handleOpenOCDStartFailed()
 // start gdb-multiarch, return true if success, false otherwise
 bool SeerGdbWidget::startGdbMultiarch() {
     return true;
+}
+
+void SeerGdbWidget::setGdbMultiarchPid(int pid)
+{
+    if (gdbProgram() != gdbMultiarchExePath())
+        return;
+    _gdbmultiarchPid = pid;
+    setExecutablePid(pid);
 }

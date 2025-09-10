@@ -44,14 +44,16 @@ void SeerOpenOCDWidget::killOpenOCD ()
         _openocdProcess->kill();
         _openocdProcess->waitForFinished();
         delete _openocdProcess;
+        _openocdProcess = nullptr;
     }
 }
 
 bool SeerOpenOCDWidget::isOpenocdRunning ()
 {
-    if (_openocdProcess->state() == QProcess::Running) {
-        return true;
-    }
+    if (_openocdProcess)
+        if (_openocdProcess->state() == QProcess::Running) {
+            return true;
+        }
     return false;
 }
 /***********************************************************************************************************************

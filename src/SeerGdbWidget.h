@@ -238,6 +238,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // void                                setKernelSymbolPath                 (const QString& executable);
         // const QString&                      kernelCodePath                      () const;
         // void                                setKernelCodePath                   (const QString& executable);
+        void                                setGdbMultiarchPid                  (int pid);
 
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
@@ -467,6 +468,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointFunctionName;
         QString                             _executableBreakpointSourceName;
         int                                 _executablePid;
+        int                                 _gdbmultiarchPid;               // specifically for gdbmultiarch
         QString                             _executableConnectHostPort;
         QString                             _executableRRTraceDirectory;
         QString                             _executableCoreFilename;
