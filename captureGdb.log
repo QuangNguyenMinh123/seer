@@ -1,0 +1,30 @@
+New UI allocated
+GNU gdb (GNU Tools for STM32 13.3.rel1.20240926-1715) 14.2.90.20240526-git
+Copyright (C) 2023 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-linux-gnu --target=arm-none-eabi".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) 0x08000a0c in HAL_Delay (Delay=10000) at /home/quangnm/Documents/GitHub/seer/nucleo_blink/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c:401                                                                     
+401       while((HAL_GetTick() - tickstart) < wait)
+
+Temporary breakpoint 1, main () at /home/quangnm/Documents/GitHub/seer/nucleo_blink/Core/Src/main.c:79
+79        HAL_Init();
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+0x08000a12 in HAL_Delay (Delay=10000) at /home/quangnm/Documents/GitHub/seer/nucleo_blink/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c:401
+401       while((HAL_GetTick() - tickstart) < wait)
+
+Breakpoint 2, main () at /home/quangnm/Documents/GitHub/seer/nucleo_blink/Core/Src/main.c:108
+108               HAL_Delay(10000);
+Quit
+(gdb) 
