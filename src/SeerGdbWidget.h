@@ -239,6 +239,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // const QString&                      kernelCodePath                      () const;
         // void                                setKernelCodePath                   (const QString& executable);
         void                                setGdbMultiarchPid                  (int pid);
+        void                                setNewHardwareBreakpointFlag        (bool flag);
+        bool                                isNewHardwareBreakpointFlag         ();
+        void                                setGdbMultiarchRunningState         (bool flag);
+        bool                                gdbMultiarchRunningState            ();
+        QProcess*                           openocdProcess                      ();
 
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
@@ -517,5 +522,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // gdb multiarch variables
         QString                             _gdbMultiarchProgram;
         QString                             _gdbMultiarchArguments;
+        bool                                _newHBreakFlag;
+        bool                                _isTargetRunning;               // hold target state: running / halted
 };
-

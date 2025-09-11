@@ -88,7 +88,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&                      kernelSymbolPath                    ();
         void                                setKernelSymbolPath                 (const QString& path);
         const QString&                      kernelCodePath                      ();
-        void                                setKernelCodePath                   (const QString& path);    
+        void                                setKernelCodePath                   (const QString& path);
     
     private slots:
         void                        handleFileDebug                         ();

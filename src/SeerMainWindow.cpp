@@ -446,10 +446,13 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionOpenOCDAttach->setVisible(false);
     menuOpenOCD->setVisible(false);
     // if OpenOCD tab exists, kill it along with any running OpenOCD process.
-    if (gdbWidget->openOCDWidgetInstance()->isOpenocdRunning() == true) {
-        gdbWidget->openOCDWidgetInstance()->killOpenOCD();
-        gdbWidget->openOCDWidgetInstance()->killConsole();
-        gdbWidget->setGdbProgram("/usr/bin/gdb");
+    if (gdbWidget->openOCDWidgetInstance()->openocdProcess())
+    {
+        if (gdbWidget->openOCDWidgetInstance()->isOpenocdRunning() == true) {
+            gdbWidget->openOCDWidgetInstance()->killOpenOCD();
+            gdbWidget->openOCDWidgetInstance()->killConsole();
+            gdbWidget->setGdbProgram("/usr/bin/gdb");
+        }
     }
 
     // As new session is started, kill any existing gdb process
@@ -1106,6 +1109,7 @@ void SeerMainWindow::handleText (const QString& text) {
         return;
 
     }else if (text == "^running") {
+        gdbWidget->setGdbMultiarchRunningState(true);
         // Swallow this message.
         return;
 
@@ -1224,6 +1228,7 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         handleShowMessage("Program stopped. Reason: " + reason_text, 3000);
+        gdbWidget->setGdbMultiarchRunningState(false);
 
         if (reason_text == "signal-received") {
             //*stopped,reason="signal-received",signal-name="SIGSEGV",signal-meaning="Segmentation fault", ...

@@ -16,6 +16,18 @@ SeerOpenOCDWidget::~SeerOpenOCDWidget (){
     killOpenOCD();
     delete _openocdProcess;
 }
+
+void SeerOpenOCDWidget::newOpenOCDWidget (){
+    if (!_openocdProcess)
+        _openocdProcess = new QProcess(this);
+    _openocdArguments = "";
+    _openocdlogsTabWidget = nullptr;
+}
+
+QProcess* SeerOpenOCDWidget::openocdProcess()
+{
+    return _openocdProcess;
+}
 /***********************************************************************************************************************
  * startOpenOCD: Run a openOCD process, return true if on success, false if fail                                       *
  * Argument: QString command                                                                                           *

@@ -13,6 +13,7 @@ class SeerOpenOCDWidget: public SeerLogWidget{
     public:
         explicit SeerOpenOCDWidget          (QWidget* parent = 0);
         ~SeerOpenOCDWidget                  ();
+        void newOpenOCDWidget               ();
         // Start & kill OpenOCD process
         bool startOpenOCD                   (const QString &openocdExe, const QString &command);
         void killOpenOCD                    ();
@@ -25,6 +26,8 @@ class SeerOpenOCDWidget: public SeerLogWidget{
         SeerLogWidget* openocdConsole              ();
         SeerOpenOCDWidget* getOpenOCDWidget ();
         SeerOpenOCDWidget* setOpenOCDWidget (SeerOpenOCDWidget* widget);
+        QProcess* openocdProcess();
+        
     signals:
         void openocdDisconnect              ();
         void openocdStartFailed             ();

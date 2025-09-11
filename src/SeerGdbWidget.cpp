@@ -946,8 +946,11 @@ void SeerGdbWidget::handleText (const QString& text) {
 
     // Probably a better way to handle all these types of stops.
     }else if (text.startsWith("*stopped")) {
-
-        emit stoppingPointReached();
+        if (isNewHardwareBreakpointFlag() == false)
+        {
+            setNewHardwareBreakpointFlag(false);
+            emit stoppingPointReached();
+        }
 
     }else if (text.startsWith("=breakpoint-created,")) {
 
@@ -1808,7 +1811,11 @@ void SeerGdbWidget::handleGdbRecordDirectionToggle () {
 
 void SeerGdbWidget::handleGdbInterrupt () {
 
-    sendGdbInterrupt(-1);
+    if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
+        _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
+        handleGdbInterruptSIGINT();
+    else
+        sendGdbInterrupt(-1);
 }
 
 void SeerGdbWidget::handleGdbInterruptSIGINT () {
@@ -2215,9 +2222,28 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     if (executableLaunchMode() == "") {
         return;
     }
-
-    handleGdbCommand("-break-insert -h " + breakpoint);
-    handleGdbGenericpointList();
+    // check if breakpoint exists there
+    // if OpenOCD is running well, halt target then add breakpoint, then resume
+    // since on embedded system, we cannot add hbreakpoint with gdb MI so this is workaround
+    if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
+        _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
+    {
+        setNewHardwareBreakpointFlag(true);
+        _gdbMonitor->ignoreNewHardBreakpoint();
+        handleGdbInterruptSIGINT();
+        handleGdbCommand("-break-insert -h " + breakpoint);
+        handleGdbGenericpointList();
+        // if target is running
+        if (gdbMultiarchRunningState() == true)
+        {
+            handleGdbContinue();
+        }   
+    }
+    else
+    {
+        handleGdbCommand("-break-insert " + breakpoint);
+        handleGdbGenericpointList();
+    }
 }
 
 void SeerGdbWidget::handleGdbBreakpointCondition (QString breakpoint, QString condition) {
@@ -4248,6 +4274,10 @@ void SeerGdbWidget::setKernelCodePath (const QString& path){
 SeerOpenOCDWidget* SeerGdbWidget::openOCDWidgetInstance() {
     return openocdWidget;
 }
+
+QProcess* SeerGdbWidget::openocdProcess() {
+    return openocdWidget->openocdProcess();
+}
 /***********************************************************************************************************************
  * slot                                                                                                                *
 ***********************************************************************************************************************/
@@ -4255,6 +4285,7 @@ SeerOpenOCDWidget* SeerGdbWidget::openOCDWidgetInstance() {
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
 {
     // Create the OpenOCD console tab, add to the log tabs
+    openocdWidget->newOpenOCDWidget();
     openocdWidget->createOpenOCDConsole(logsTabWidget);
     // logsTabWidget->addTab(openocdWidget->openocdConsole(), "OpenOCD output");
     // Start OpenOCD with the given path and command
@@ -4269,6 +4300,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
     }
     // Now, set _gdbProgram as gdb-multiarch, provided by openocd launch mode
     setGdbProgram(gdbMultiarchExePath());
+    setGdbMultiarchRunningState(true);          // always assume that target is running
     // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
     qCDebug(LC) << "Starting 'openocd gdb-multiarch connect'";
 
@@ -4297,7 +4329,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
-            handleGdbCommand("-gdb-set mi-async on");
+            
             handleGdbCommand("-gdb-set non-stop off");
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
@@ -4349,7 +4381,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
         }
 
         // Set window titles with name of program.
-        emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session"));
+        emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));
 
         // Notify the state of the GdbWidget has changed.
         emit stateChanged();
@@ -4379,4 +4411,24 @@ void SeerGdbWidget::setGdbMultiarchPid(int pid)
         return;
     _gdbmultiarchPid = pid;
     setExecutablePid(pid);
+}
+
+void SeerGdbWidget::setNewHardwareBreakpointFlag(bool flag)
+{
+    _newHBreakFlag = flag;
+}
+
+bool SeerGdbWidget::isNewHardwareBreakpointFlag()
+{
+    return _newHBreakFlag;
+}
+
+void SeerGdbWidget::setGdbMultiarchRunningState(bool flag)
+{
+    _isTargetRunning = flag;
+}
+
+bool SeerGdbWidget::gdbMultiarchRunningState()
+{
+    return _isTargetRunning;
 }

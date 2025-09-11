@@ -14,6 +14,7 @@ class GdbMonitor : public QObject {
 
         void            setProcess                      (QProcess* process);
         QProcess*       process                         ();
+        void            ignoreNewHardBreakpoint             ();
 
     signals:
         void            allTextOutput                   (const QString& text);
@@ -35,7 +36,10 @@ class GdbMonitor : public QObject {
         void            handleTextOutput                (QString text);
 
     private:
+        void            removeNewHardBreakpoint         ();
+        bool            isNewHardBreakpointExist        ();
         QProcess*       _process;
+        int             _countIgnoreFlag;
 };
 
 #endif
