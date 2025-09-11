@@ -1,0 +1,3 @@
+[submodule "stm32f1_blink/vendor"]
+	path = stm32f1_blink/vendor
+	url = https://github.com/STMicroelectronics/STM32CubeF1.git
