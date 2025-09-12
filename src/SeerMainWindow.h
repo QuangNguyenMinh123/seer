@@ -118,6 +118,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleStyleMenuChanged                  ();
         void                        handleShowMessage                       (QString message, int time);
         void                        handleGdbStateChanged                   ();
+        void                        handleGdbContinueDisableButton          ();
+        void                        handleGdbInterruptEnableButton          ();
 
     protected:
         void                        writeSettings                           ();

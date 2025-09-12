@@ -202,6 +202,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::gdbContinue,                    this,           &SeerMainWindow::handleGdbContinueDisableButton);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::gdbInterrupt,                   this,           &SeerMainWindow::handleGdbInterruptEnableButton);
     handleRecordSettingsChanged();
 
     //
@@ -494,6 +496,12 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         gdbWidget->handleGdbCoreFileExecutable();
 
     } else if (launchMode == "openocd") {
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
+        actionGdbNexti->setVisible(false);
+        actionGdbStepi->setVisible(false);
+        actionControlNexti->setVisible(false);
+        actionControlStepi->setVisible(false);
         // display attach button
         // menubar->actionOpenOCD->setVisible(true);
         actionOpenOCDAttach->setVisible(true);
@@ -1247,6 +1255,8 @@ void SeerMainWindow::handleText (const QString& text) {
             }else{
                 gdbWidget->addMessage("Program reached breakpoint '" + bkptno_text + "'.", QMessageBox::Information);
             }
+            // enable some button when target stop
+            handleGdbInterruptEnableButton();
 
         }else if (reason_text == "watchpoint-trigger") {
             //*stopped,reason="watchpoint-trigger",wpt={number="3",exp="i"},value={old="32767",new="42"},frame={addr="0x0000000000400d79",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="9",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="0"
@@ -1879,4 +1889,41 @@ const QString& SeerMainWindow::kernelCodePath () {
 
 void SeerMainWindow::setKernelCodePath (const QString& path){
     gdbWidget->setKernelCodePath(path);
+}
+
+// Disable some button while target is running
+void SeerMainWindow::handleGdbContinueDisableButton()
+{
+    actionControlContinue->setEnabled(false);
+    actionControlNext->setEnabled(false);
+    actionControlStep->setEnabled(false);
+    actionControlFinish->setEnabled(false);
+    actionControlInterrupt->setEnabled(true);
+    actionControlNexti->setEnabled(false);
+    actionControlStepi->setEnabled(false);
+    actionGdbContinue->setEnabled(false);
+    actionGdbNext->setEnabled(false);
+    actionGdbStep->setEnabled(false);
+    actionGdbFinish->setEnabled(false);
+    actionGdbNexti->setEnabled(false);
+    actionGdbStepi->setEnabled(false);
+    actionInterruptProcess->setEnabled(true);
+}
+// Enable some button while target is interrupted
+void SeerMainWindow::handleGdbInterruptEnableButton()
+{
+    actionControlContinue->setEnabled(true);
+    actionControlNext->setEnabled(true);
+    actionControlStep->setEnabled(true);
+    actionControlFinish->setEnabled(true);
+    actionControlInterrupt->setEnabled(false);
+    actionControlNexti->setEnabled(true);
+    actionControlStepi->setEnabled(true);
+    actionGdbContinue->setEnabled(true);
+    actionGdbNext->setEnabled(true);
+    actionGdbStep->setEnabled(true);
+    actionGdbFinish->setEnabled(true);
+    actionGdbNexti->setEnabled(true);
+    actionGdbStepi->setEnabled(true);
+    actionInterruptProcess->setEnabled(false);
 }

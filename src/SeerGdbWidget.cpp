@@ -949,6 +949,7 @@ void SeerGdbWidget::handleText (const QString& text) {
         if (isNewHardwareBreakpointFlag() == false)
         {
             setNewHardwareBreakpointFlag(false);
+            emit gdbInterrupt();
             emit stoppingPointReached();
         }
 
@@ -1619,6 +1620,17 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
             // Kill the gdb.
             killGdb();
 
+            // If openOCD is running then kill it
+            if (openocdProcess())
+            {
+                openocdWidget->killOpenOCD();
+            }
+            if (openocdWidget->openocdConsole())
+            {
+                openocdWidget->killConsole();
+            }
+
+            
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
 
@@ -1727,8 +1739,11 @@ void SeerGdbWidget::handleGdbContinue () {
     if (executableLaunchMode() == "") {
         return;
     }
-
+    if (gdbMultiarchRunningState() == true && _gdbmultiarchPid > 0)             // if openoocd target running, bypass
+        return;
     handleGdbCommand(QString("-exec-continue %1").arg(gdbRecordDirection()));
+    // emit signal, to tell SeerMainWindow to disable actionControlNext, actionControlStep, actionControlFinish button
+    emit gdbContinue();
 }
 
 void SeerGdbWidget::handleGdbRecordStart () {
@@ -1813,9 +1828,14 @@ void SeerGdbWidget::handleGdbInterrupt () {
 
     if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
-        handleGdbInterruptSIGINT();
+        {
+            handleGdbInterruptSIGINT();
+            QApplication::restoreOverrideCursor();
+        }
     else
         sendGdbInterrupt(-1);
+    // signal, to tell SeerMainWindow to enable actionControlNext, actionControlStep, actionControlFinish button
+    emit gdbInterrupt();
 }
 
 void SeerGdbWidget::handleGdbInterruptSIGINT () {

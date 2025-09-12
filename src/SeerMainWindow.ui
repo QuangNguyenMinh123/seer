@@ -147,8 +147,6 @@
     <addaction name="actionOpenOCDAbout"/>
     <addaction name="separator"/>
     <addaction name="actionOpenOCDConfiguration"/>
-    <addaction name="actionOpenOCDRecent_Project"/>
-    <addaction name="actionOpenOCDImport_Project"/>
     <addaction name="actionOpenOCDAttach"/>
     <addaction name="separator"/>
     <addaction name="actionOpenOCDHelp"/>
@@ -799,6 +797,9 @@
    </property>
    <property name="text">
     <string>Attach</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect OpenOCD to target</string>
    </property>
    <property name="whatsThis">
     <string extracomment="OpenOCD connect to target"/>

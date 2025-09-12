@@ -14,7 +14,6 @@ SeerOpenOCDWidget::SeerOpenOCDWidget (QWidget* parent) {
 
 SeerOpenOCDWidget::~SeerOpenOCDWidget (){
     killOpenOCD();
-    delete _openocdProcess;
 }
 
 void SeerOpenOCDWidget::newOpenOCDWidget (){
@@ -52,11 +51,14 @@ bool SeerOpenOCDWidget::startOpenOCD (const QString &openocdExe, const QString &
 
 void SeerOpenOCDWidget::killOpenOCD ()
 {
-    if (_openocdProcess->state() == QProcess::Running) {
-        _openocdProcess->kill();
-        _openocdProcess->waitForFinished();
-        delete _openocdProcess;
-        _openocdProcess = nullptr;
+    if (_openocdProcess)
+    {
+        if (_openocdProcess->state() == QProcess::Running) {
+            _openocdProcess->kill();
+            _openocdProcess->waitForFinished();
+            delete _openocdProcess;
+            _openocdProcess = nullptr;
+        }
     }
 }
 
