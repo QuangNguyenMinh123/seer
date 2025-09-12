@@ -7,4 +7,4 @@ Example
 openocd
 libjaylink
 nucleo_blink/
-build*
+build/
