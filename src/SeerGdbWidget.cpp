@@ -942,14 +942,17 @@ void SeerGdbWidget::readLogsSettings () {
 
 void SeerGdbWidget::handleText (const QString& text) {
 
+    if (text.startsWith("*running")) {
+        if (_gdbmultiarchPid > 0)               // if openoocd target running, target is running
+            setGdbMultiarchRunningState(true);
+    }
     if (text.startsWith("*running,thread-id=\"all\"")) {
-
     // Probably a better way to handle all these types of stops.
     }else if (text.startsWith("*stopped")) {
-        if (isNewHardwareBreakpointFlag() == false)
+        setGdbMultiarchRunningState(false);     // target stopped
+        if (isNewHardwareBreakpointFlag() == true)
         {
             setNewHardwareBreakpointFlag(false);
-            emit gdbInterrupt();
             emit stoppingPointReached();
         }
 
@@ -1739,11 +1742,7 @@ void SeerGdbWidget::handleGdbContinue () {
     if (executableLaunchMode() == "") {
         return;
     }
-    if (gdbMultiarchRunningState() == true && _gdbmultiarchPid > 0)             // if openoocd target running, bypass
-        return;
     handleGdbCommand(QString("-exec-continue %1").arg(gdbRecordDirection()));
-    // emit signal, to tell SeerMainWindow to disable actionControlNext, actionControlStep, actionControlFinish button
-    emit gdbContinue();
 }
 
 void SeerGdbWidget::handleGdbRecordStart () {
@@ -1834,8 +1833,6 @@ void SeerGdbWidget::handleGdbInterrupt () {
         }
     else
         sendGdbInterrupt(-1);
-    // signal, to tell SeerMainWindow to enable actionControlNext, actionControlStep, actionControlFinish button
-    emit gdbInterrupt();
 }
 
 void SeerGdbWidget::handleGdbInterruptSIGINT () {
@@ -2243,13 +2240,13 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
         return;
     }
     // check if breakpoint exists there
-    // if OpenOCD is running well, halt target then add breakpoint, then resume
-    // since on embedded system, we cannot add hbreakpoint with gdb MI so this is workaround
+    // if OpenOCD is running well, halt target then add breakpoint, then resume since on
+    // embedded system, we cannot add hbreakpoint on runtime with gdb MI so this is workaround
     if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
     {
         setNewHardwareBreakpointFlag(true);
-        _gdbMonitor->ignoreNewHardBreakpoint();
+        _gdbMonitor->setNewHardBreakpointFlag();
         handleGdbInterruptSIGINT();
         handleGdbCommand("-break-insert -h " + breakpoint);
         handleGdbGenericpointList();

@@ -3,23 +3,25 @@
 ⚠ == Warning
 ✓ == done, fixed
 ✗ == cancelled
-1. Start OpenOCD process                                                                ✓
-2. Capture OpenOCD log                                                                  ✓ 
-3. Start GDB-multiarch process                                                          ✓ 
-4. Connect GDB-multiarch to OpenOCD port                                                ✓
-5. display source code debug on Stm32                                                   ✓
-6. on Breakpoints/Watchpoints Tab, Can i remove some col, like number, adress, ...?
+1. Start OpenOCD process                                                                        ✓
+2. Capture OpenOCD log                                                                          ✓ 
+3. Start GDB-multiarch process                                                                  ✓ 
+4. Connect GDB-multiarch to OpenOCD port                                                        ✓
+5. display source code debug on Stm32                                                           ✓
+6. on Breakpoints/Watchpoints Tab ..., Can i remove some col, like number, adress, ...?
 7. Can i add dock feature to every tab?
 8. Add OpenOCD -> add insmode kernel module.
 9. Add help, readme     (minimum priority)
-10. Add feature: disable actionControlNext, actionControlStep,actionControlFinish       ✓
+10. Add feature: disable actionControlNext, actionControlStep,actionControlFinish               ✓
     while target is running and enable them when target is halted (this can fix some bug)
 11. check, test stepi and nexti on openocd
 12. Add multiple backtrace pointer color (like vscode)
 13. Debug kernel (HIGH PRIORITY)
 14. Debug kernel module (HIGH PRIORITY)
+15. Add status indicator, display status: running, stopped, stop at breakpoint, disconnected,
+    running core. (enhance SeerRunStatusIndicator)
 # Bug:
-- Insert breakpoint during running for openocd (HIGH PRIORITY)
+- Insert, remove breakpoint during running for openocd (HIGH PRIORITY)
 - Breakpoints don't show up in "Breakpoints" Tab for openocd                                            ✓
 - Multiple breakpoints at one point.
     To reporoduce: add breakpoint at unaddable point (like at "}" or empty line) (both on desktop and openocd)

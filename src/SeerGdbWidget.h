@@ -415,10 +415,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                assemblyConfigChanged               ();
         void                                recordSettingsChanged               ();
         void                                stateChanged                        ();
-        //openocd
+        //openocd, for debugging gdb log
         void                                allTextOutput                       (const QString& text);
-        void                                gdbContinue                         ();
-        void                                gdbInterrupt                        ();
 
     protected:
         void                                writeLogsSettings                   ();

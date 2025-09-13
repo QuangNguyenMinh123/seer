@@ -56,7 +56,7 @@ void GdbMonitor::handleReadyReadStandardError () {
         qCDebug(LC) << text;
 
         // Start broadcasting it around.
-        emit allTextOutput("from gdbmonitor: " + text + "\n");
+        emit allTextOutput("from gdbmonitor1: " + text + "\n");
     }
 }
 
@@ -64,7 +64,8 @@ void GdbMonitor::handleReadyReadStandardOutput () {
     qCDebug(LC) << "Ready to read stdout";
 
     QProcess* p = (QProcess*)sender();
-
+    //QUangNM13 openocd:
+    int i =0;
     // Read a line at a time.
     while (p->canReadLine()) {
 
@@ -86,19 +87,20 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         qCDebug(LC) << text;
 
         // Start broadcasting it around.
-        emit allTextOutput("from gdbmonitor: " + text + "\n");
+        emit allTextOutput("from gdbmonitor2: " + text + "\n");
+        if (text.startsWith("*stopped") && text.startsWith("*stopped,reason=\"breakpoint-hit\""))
+            i += 1;
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {
             emit equalTextOutput(text);
         }else if (text[0] == '*') {
             // If gdb-multiarch is running and quick bp is added then this will bypass next SIGINT
-            if (isNewHardBreakpointExist())
+            if (isAddingQuickBreakpoint())
             {
-                removeNewHardBreakpoint();
+                removeQuickBreakpointFlag();
                 continue;
             }
-                
             emit astrixTextOutput(text);
         }else if (text[0] == '^') {
             emit caretTextOutput(text);
@@ -129,7 +131,7 @@ void GdbMonitor::handleTextOutput (QString text) {
     qCDebug(LC) << "Ready to handle text output";
     qCDebug(LC) << text;
 
-    emit allTextOutput("from gdbmonitor: " + text + "\n");
+    emit allTextOutput("from gdbmonitor3: " + text + "\n");
 
     if (text[0] == '~') {
         emit tildeTextOutput(text);
@@ -178,17 +180,17 @@ QProcess* GdbMonitor::process () {
     return _process;
 }
 
-void GdbMonitor::ignoreNewHardBreakpoint()
+void GdbMonitor::setNewHardBreakpointFlag()
 {
     _countIgnoreFlag = 1;
 }
 
-void GdbMonitor::removeNewHardBreakpoint ()
+void GdbMonitor::removeQuickBreakpointFlag ()
 {
     _countIgnoreFlag = 0;
 }
 
-bool GdbMonitor::isNewHardBreakpointExist()
+bool GdbMonitor::isAddingQuickBreakpoint()
 {
     return _countIgnoreFlag;
 }

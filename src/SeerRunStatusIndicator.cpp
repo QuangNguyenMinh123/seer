@@ -1,6 +1,7 @@
 #include "SeerRunStatusIndicator.h"
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
+#include <QPainter>
 
 SeerRunStatusIndicator::SeerRunStatusIndicator(QWidget* parent) : QLabel(parent) {
     _runStatus = RunStatus::Idle;
@@ -72,3 +73,7 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
     }
 }
 
+void SeerRunStatusIndicator::setCore(int coreIdx)
+{
+    
+}

@@ -201,9 +201,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(qApp,                              &QApplication::aboutToQuit,                     gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
-
-    QObject::connect(gdbWidget,                         &SeerGdbWidget::gdbContinue,                    this,           &SeerMainWindow::handleGdbContinueDisableButton);
-    QObject::connect(gdbWidget,                         &SeerGdbWidget::gdbInterrupt,                   this,           &SeerMainWindow::handleGdbInterruptEnableButton);
+    // This handle button state when target state changes
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleStatusChanged);
     handleRecordSettingsChanged();
 
     //
@@ -1117,7 +1116,6 @@ void SeerMainWindow::handleText (const QString& text) {
         return;
 
     }else if (text == "^running") {
-        gdbWidget->setGdbMultiarchRunningState(true);
         // Swallow this message.
         return;
 
@@ -1236,7 +1234,6 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         handleShowMessage("Program stopped. Reason: " + reason_text, 3000);
-        gdbWidget->setGdbMultiarchRunningState(false);
 
         if (reason_text == "signal-received") {
             //*stopped,reason="signal-received",signal-name="SIGSEGV",signal-meaning="Segmentation fault", ...
@@ -1256,7 +1253,7 @@ void SeerMainWindow::handleText (const QString& text) {
                 gdbWidget->addMessage("Program reached breakpoint '" + bkptno_text + "'.", QMessageBox::Information);
             }
             // enable some button when target stop
-            handleGdbInterruptEnableButton();
+            handleGdbTargetInterrupt();
 
         }else if (reason_text == "watchpoint-trigger") {
             //*stopped,reason="watchpoint-trigger",wpt={number="3",exp="i"},value={old="32767",new="42"},frame={addr="0x0000000000400d79",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="9",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="0"
@@ -1892,7 +1889,7 @@ void SeerMainWindow::setKernelCodePath (const QString& path){
 }
 
 // Disable some button while target is running
-void SeerMainWindow::handleGdbContinueDisableButton()
+void SeerMainWindow::handleGdbTargetRunning()
 {
     actionControlContinue->setEnabled(false);
     actionControlNext->setEnabled(false);
@@ -1910,7 +1907,7 @@ void SeerMainWindow::handleGdbContinueDisableButton()
     actionInterruptProcess->setEnabled(true);
 }
 // Enable some button while target is interrupted
-void SeerMainWindow::handleGdbInterruptEnableButton()
+void SeerMainWindow::handleGdbTargetInterrupt()
 {
     actionControlContinue->setEnabled(true);
     actionControlNext->setEnabled(true);
@@ -1926,4 +1923,16 @@ void SeerMainWindow::handleGdbInterruptEnableButton()
     actionGdbNexti->setEnabled(true);
     actionGdbStepi->setEnabled(true);
     actionInterruptProcess->setEnabled(false);
+}
+
+void SeerMainWindow::handleStatusChanged(QString message) {
+    // target halt
+    if (message.startsWith("*stopped"))
+    {
+        handleGdbTargetInterrupt();
+    }
+    else if (message.startsWith("*running"))      // target is running
+    {
+        handleGdbTargetRunning();
+    }
 }

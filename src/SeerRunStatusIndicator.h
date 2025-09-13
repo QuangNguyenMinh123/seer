@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QLabel>
 #include <QtCore/QString>
+#include "ui_SeerRunStatusIndicator.h"
 
 class SeerRunStatusIndicator : public QLabel {
 
@@ -19,6 +20,7 @@ class SeerRunStatusIndicator : public QLabel {
 
         void                                setRunStatus                (SeerRunStatusIndicator::RunStatus status);
         SeerRunStatusIndicator::RunStatus   runStatus                   () const;
+        void                                setCore                     (int coreIdx);
 
     signals:
         void                                statusChanged               (SeerRunStatusIndicator::RunStatus status);
