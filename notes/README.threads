@@ -1,6 +1,6 @@
 
 
-SeerRunStatusIndicator::handleText: "*running,thread-id=\"2\""
+SeerRunStatusIndicatorBox::handleText: "*running,thread-id=\"2\""
 
 -thread-info
 

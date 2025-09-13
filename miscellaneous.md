@@ -19,7 +19,7 @@
 13. Debug kernel (HIGH PRIORITY)
 14. Debug kernel module (HIGH PRIORITY)
 15. Add status indicator, display status: running, stopped, stop at breakpoint, disconnected,
-    running core. (enhance SeerRunStatusIndicator)
+    running core. (enhance SeerRunStatusIndicatorBox)
 # Bug:
 - Insert, remove breakpoint during running for openocd (HIGH PRIORITY)
 - Breakpoints don't show up in "Breakpoints" Tab for openocd                                            ✓

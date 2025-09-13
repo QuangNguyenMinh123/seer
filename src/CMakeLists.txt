@@ -113,7 +113,7 @@ set(HEADER_FILES
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
     SeerRegisterTreeWidgetItem.h
-    SeerRunStatusIndicator.h
+    SeerRunStatusIndicatorBox.h
     SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
     SeerFunctionBrowserWidget.h
@@ -216,7 +216,7 @@ set(SOURCE_FILES
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp
     SeerRegisterTreeWidgetItem.cpp
-    SeerRunStatusIndicator.cpp
+    SeerRunStatusIndicatorBox.cpp
     SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
     SeerFunctionBrowserWidget.cpp

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_SeerMainWindow.h"
-#include "SeerRunStatusIndicator.h"
+#include "SeerRunStatusIndicatorBox.h"
 #include "SeerKeySettings.h"
 #include "SeerProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
@@ -109,7 +109,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleSettingsSaveConfiguration         ();
         void                        handleHelpAbout                         ();
         void                        handleText                              (const QString& text);
-        void                        handleRunStatusChanged                  (SeerRunStatusIndicator::RunStatus status);
+        void                        handleRunStatusChanged                  (SeerRunStatusIndicatorBox::RunStatus status);
         void                        handleRecordSettingsChanged             ();
         void                        handleChangeWindowTitle                 (QString title);
         void                        handleHelpToolButtonClicked             ();
