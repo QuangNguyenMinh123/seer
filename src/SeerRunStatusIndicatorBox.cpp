@@ -64,15 +64,15 @@ void SeerRunStatusIndicatorBox::setRunStatus (SeerRunStatusIndicatorBox::RunStat
     else if (status == RunStatus::Running) {
         QApplication::setOverrideCursor(Qt::BusyCursor);
         statusLabel->setText("Running");
-        statusLabel->setStyleSheet("background-color: green; color: black; font-weight: bold;");
+        statusLabel->setStyleSheet("background-color: lightgreen; color: black; font-weight: bold;");
 
-    } 
+    }
     else if (status == RunStatus::Disconnect) {
         QApplication::setOverrideCursor(Qt::BusyCursor);
         statusLabel->setText("DISCONNECTED");
         statusLabel->setStyleSheet("background-color: red; color: black; font-weight: bold;");
 
-    } 
+    }
     else {
         QApplication::restoreOverrideCursor();
         statusLabel->setText("Unknown");

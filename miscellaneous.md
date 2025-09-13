@@ -19,7 +19,7 @@
 13. Debug kernel (HIGH PRIORITY)
 14. Debug kernel module (HIGH PRIORITY)
 15. Add status indicator, display status: running, stopped, stop at breakpoint, disconnected,
-    running core. (enhance SeerRunStatusIndicatorBox)
+    running core. (enhance SeerRunStatusIndicatorBox)                                           ✓ (disconnected will be fixed along with openocd)
 # Bug:
 - Insert, remove breakpoint during running for openocd (HIGH PRIORITY)
 - Breakpoints don't show up in "Breakpoints" Tab for openocd                                            ✓
@@ -28,7 +28,7 @@
 - Bug on highlighting current execution line, it is not erase color while continuing (starting from main)
 - when re-open openocd launch mode then close seergdb, causing hang up on exit (not clear if it is major bug)
 - on debugging math_toolkit, cannot close nanosleep.c source code tab
-- Bug: on hitting breakpoints, continue, next, step button aren't enabled                               
+- Bug: on hitting breakpoints, continue, next, step button aren't enabled                               ✓
 # To fix attach to target issue
 2 solutions:
 - ```sudo seergdb```
