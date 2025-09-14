@@ -11,7 +11,11 @@ sudo apt install -y qt6-base-dev libqt6gui6 libqt6charts6-dev libqt6opengl6-dev 
 cd ${TOP_DIR}/src
 mkdir -p build
 cd ${TOP_DIR}/src/build
-cmake ..
+cmake -DCMAKE_PREFIX_PATH=/home/quangnm/Qt/6.6.0 ..     
+# export LD_LIBRARY_PATH=/home/quangnm/Qt/6.6.0/lib
+# export CMAKE_PREFIX_PATH=/home/quangnm/Qt/6.6.0
+# to launch  /usr/local/bin/seergdb
+# Eg: LD_LIBRARY_PATH=/home/quangnm/Qt/6.6.0/lib CMAKE_PREFIX_PATH=/home/quangnm/Qt/6.6.0 /usr/local/bin/seergdb
 make seergdb -j8
 cd ${TOP_DIR}
 sudo dpkg-buildpackage -j8

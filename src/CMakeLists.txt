@@ -1,8 +1,12 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.21.0)          # QuangNM13 QT v6.6
 
 project(seergdb VERSION 2.6.0 LANGUAGES CXX)
+set(QT_VERSION_MAJOR 6)                         # QuangNM13 QT v6.6
+set(QT_REQUIRED_VERSION 6.6)                    # QuangNM13 QT v6.6
 
 set(PROJECT_NAME seergdb)
+set(DCMAKE_PREFIX_PATHn /home/quangnm/Qt/6.6.0) # QuangNM13 QT v6.6
+set(LD_LIBRARY_PATH /home/quangnm/Qt/6.6.0/lib) # QuangNM13 QT v6.6
 
 if(NOT DEFINED QTVERSION)
     set(QTVERSION "QT6" CACHE STRING "" FORCE)

@@ -20,8 +20,9 @@ make
 sudo make install
 git clone https://github.com/KDAB/GammaRay.git
 cd GammaRay
+sudo apt purge gammaray
 mkdir build && cd build/
-cmake .. -DCMAKE_PREFIX_PATH=$HOME/Qt/6.6.0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/Qt/6.6.0 -DQT_FEATURE_xcb=ON
+cmake -G Ninja -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/Qt/6.6.0
 
 cmake --build .
 sudo cmake --build . --target install

@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "qt6.6",
+      "displayName": "Build with Qt 6.6",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "/home/quangnm/Qt/6.6.0",
+		"LD_LIBRARY_PATH": "/home/quangnm/Qt/6.6.0/lib"
+      }
+    }
+  ]
+}
