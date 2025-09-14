@@ -31,9 +31,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
 
     // Add status bar indicator.
-    SeerRunStatusIndicatorBox* runStatus = new SeerRunStatusIndicatorBox(this);
+    _runStatus = new SeerRunStatusIndicatorBox(this);
 
-    statusBar()->addPermanentWidget(runStatus->indicatorBox());
+    statusBar()->addPermanentWidget(_runStatus->indicatorBox());
 
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
@@ -140,7 +140,6 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(actionControlRestart,              &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
     QObject::connect(actionControlTerminate,            &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
-    QObject::connect(actionControlTerminate,            &QAction::triggered,                            runStatus,      &SeerRunStatusIndicatorBox::handleTerminate);
     QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStep);
@@ -186,8 +185,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
 
-    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicatorBox::handleText);
-    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   runStatus,      &SeerRunStatusIndicatorBox::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  _runStatus,      &SeerRunStatusIndicatorBox::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   _runStatus,      &SeerRunStatusIndicatorBox::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   this,           &SeerMainWindow::handleText);
@@ -198,7 +197,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(gdbWidget,                         &SeerGdbWidget::stateChanged,                   this,           &SeerMainWindow::handleGdbStateChanged);
 
-    QObject::connect(runStatus,                         &SeerRunStatusIndicatorBox::statusChanged,      this,           &SeerMainWindow::handleRunStatusChanged);
+    QObject::connect(_runStatus,                         &SeerRunStatusIndicatorBox::statusChanged,      this,           &SeerMainWindow::handleRunStatusChanged);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,                     gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
@@ -857,6 +856,7 @@ void SeerMainWindow::handleHelpAbout () {
 void SeerMainWindow::handleTerminateExecutable () {
 
     gdbWidget->handleGdbTerminateExecutable();
+    _runStatus->handleTerminate();
 }
 
 void SeerMainWindow::handleRestartExecutable () {

@@ -140,5 +140,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
         QString                     _projectFile;
+        SeerRunStatusIndicatorBox*  _runStatus;
 };
 
