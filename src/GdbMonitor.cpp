@@ -61,12 +61,13 @@ void GdbMonitor::handleReadyReadStandardError () {
 }
 
 void GdbMonitor::handleReadyReadStandardOutput () {
+
     qCDebug(LC) << "Ready to read stdout";
 
     QProcess* p = (QProcess*)sender();
-    //QUangNM13 openocd:
-    int i =0;
+
     // Read a line at a time.
+
     while (p->canReadLine()) {
 
         QByteArray buf = p->readLine();
@@ -88,8 +89,6 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 
         // Start broadcasting it around.
         emit allTextOutput("from gdbmonitor2: " + text + "\n");
-        if (text.startsWith("*stopped") && text.startsWith("*stopped,reason=\"breakpoint-hit\""))
-            i += 1;
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {

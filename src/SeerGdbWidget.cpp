@@ -1078,17 +1078,20 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         // Always say a new executable.
         // This causes a new gdb each time. The same console, though.
         setNewExecutableFlag(true);
-        qCDebug(LC) << "QuangNM13 check 1: " << newExecutableFlag();
-        // Disconnect from the console and delete the old gdb if there is a new executable.
+
+        // Delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            qCDebug(LC) << "QuangNM13 check 2: " << newExecutableFlag();
-            // console()->deleteTerminal();
             killGdb();
         }
 
         // If gdb isn't running, start it.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1111,8 +1114,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         }
 
         // Set the program's tty device for stdin and stdout.
-        console()->createTerminal();
-        console()->connectTerminal();
         handleGdbTerminalDeviceName();
 
         setExecutableLaunchMode("run");
@@ -2206,17 +2207,22 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
     if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
     {
-        // setNewHardwareBreakpointFlag(true);
-        // _gdbMonitor->setNewHardBreakpointFlag();
-        handleGdbInterruptSIGINT();
-        editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
-        handleGdbCommand("-break-delete " + breakpoints);
-        handleGdbGenericpointList();
         // if target is running
         if (gdbMultiarchRunningState() == true)
         {
+            setNewHardwareBreakpointFlag(true);
+            _gdbMonitor->setNewHardBreakpointFlag();
+            handleGdbInterruptSIGINT();
+            editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
+            handleGdbCommand("-break-delete " + breakpoints);
+            handleGdbGenericpointList();
             handleGdbContinue();
-        }   
+        }
+        else    // simply delete bp
+        {
+            handleGdbCommand("-break-delete " + breakpoints);
+            handleGdbGenericpointList();
+        }
     }
     else
     {
@@ -2269,17 +2275,22 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
     {
-        setNewHardwareBreakpointFlag(true);
-        _gdbMonitor->setNewHardBreakpointFlag();
-        editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
-        handleGdbInterruptSIGINT();
-        handleGdbCommand("-break-insert -h " + breakpoint);
-        handleGdbGenericpointList();
         // if target is running
         if (gdbMultiarchRunningState() == true)
         {
+            setNewHardwareBreakpointFlag(true);
+            _gdbMonitor->setNewHardBreakpointFlag();
+            editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
+            handleGdbInterruptSIGINT();
+            handleGdbCommand("-break-insert -h " + breakpoint);
+            handleGdbGenericpointList();
             handleGdbContinue();
-        }   
+        }
+        else    // simply put -h breakpoint
+        {
+            handleGdbCommand("-break-insert -h " + breakpoint);
+            handleGdbGenericpointList();
+        }
     }
     else
     {
