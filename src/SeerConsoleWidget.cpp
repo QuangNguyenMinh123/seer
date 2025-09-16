@@ -390,6 +390,15 @@ void SeerConsoleWidget::disconnectTerminal () {
     delete _ttyListener; _ttyListener = 0;
 }
 
+bool SeerConsoleWidget::isTerminalCreated () const {
+
+    if (_ttyFD >= 0) {
+        return true;
+    }
+
+    return false;
+}
+
 bool SeerConsoleWidget::isTerminalConnected () const {
 
     if (_ttyListener != nullptr) {
@@ -397,6 +406,19 @@ bool SeerConsoleWidget::isTerminalConnected () const {
     }
 
     return false;
+}
+
+void SeerConsoleWidget::resetTerminal () {
+
+    if (isTerminalConnected()) {
+        disconnectTerminal();
+    }
+
+    if (isTerminalCreated() == true) {
+        deleteTerminal();
+    }
+
+    createTerminal();
 }
 
 const QString& SeerConsoleWidget::terminalDeviceName () const {
