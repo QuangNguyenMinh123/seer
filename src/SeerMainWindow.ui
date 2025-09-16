@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>1289</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -144,10 +144,8 @@
     <property name="title">
      <string>OpenOCD</string>
     </property>
-    <addaction name="actionOpenOCDAbout"/>
-    <addaction name="separator"/>
-    <addaction name="actionOpenOCDConfiguration"/>
     <addaction name="actionOpenOCDAttach"/>
+    <addaction name="actionOpenOCDDebugModule"/>
     <addaction name="separator"/>
     <addaction name="actionOpenOCDHelp"/>
    </widget>
@@ -741,9 +739,9 @@
     <string>Launch a blank Matrix Visualizer.</string>
    </property>
   </action>
-  <action name="actionOpenOCDAbout">
+  <action name="actionOpenOCDDebugModule">
    <property name="text">
-    <string>About</string>
+    <string>Module Debugging</string>
    </property>
   </action>
   <action name="actionOpenOCDConfiguration">

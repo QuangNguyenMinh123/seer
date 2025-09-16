@@ -953,8 +953,9 @@ void SeerGdbWidget::handleText (const QString& text) {
         if (isNewHardwareBreakpointFlag() == true)
         {
             setNewHardwareBreakpointFlag(false);
-            emit stoppingPointReached();
+            
         }
+        emit stoppingPointReached();            // fix recursion first breakpoint hit
 
     }else if (text.startsWith("=breakpoint-created,")) {
 

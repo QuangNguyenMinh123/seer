@@ -60,6 +60,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        addCurrentLine                      (int lineno, int level);
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
+        void                                        eraseColorCurrentLine               (int lineno);
 
         void                                        clearBreakpoints                    ();
         void                                        addBreakpoint                       (int number, int lineno, bool enabled);

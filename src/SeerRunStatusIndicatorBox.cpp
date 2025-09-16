@@ -7,7 +7,7 @@
 SeerRunStatusIndicatorBox::SeerRunStatusIndicatorBox(QWidget* parent) : QGroupBox(parent) {
     _runStatus = RunStatus::Idle;
     groupBox = new QGroupBox();
-    groupBox->setTitle("GROUPBOX");
+    groupBox->setTitle("");
     // --- Create two fixed-size labels ---
     coreLabel = new QLabel("Core");
     coreLabel->setAlignment(Qt::AlignCenter);
