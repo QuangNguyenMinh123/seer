@@ -953,7 +953,6 @@ void SeerGdbWidget::handleText (const QString& text) {
         if (isNewHardwareBreakpointFlag() == true)
         {
             setNewHardwareBreakpointFlag(false);
-            
         }
         emit stoppingPointReached();            // fix recursion first breakpoint hit
 
@@ -974,6 +973,9 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         handleGdbTerminateExecutable(false);
 
+    } else if (text.startsWith("^done,BreakpointTable")) {
+        // request for current breakpoint on target
+        
     }else{
         // All other text is ignored by this widget.
     }
@@ -2199,9 +2201,27 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
     if (executableLaunchMode() == "") {
         return;
     }
-
-    handleGdbCommand("-break-delete " + breakpoints);
-    handleGdbGenericpointList();
+    // if OpenOCD is running well, halt target then delete breakpoint, then resume since on
+    // embedded system, we cannot delete hbreakpoint on runtime with gdb MI so this is workaround
+    if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
+        _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
+    {
+        // setNewHardwareBreakpointFlag(true);
+        // _gdbMonitor->setNewHardBreakpointFlag();
+        handleGdbInterruptSIGINT();
+        handleGdbCommand("-break-delete " + breakpoints);
+        handleGdbGenericpointList();
+        // if target is running
+        if (gdbMultiarchRunningState() == true)
+        {
+            handleGdbContinue();
+        }   
+    }
+    else
+    {
+        handleGdbCommand("-break-delete " + breakpoints);
+        handleGdbGenericpointList();
+    }
 }
 
 void SeerGdbWidget::handleGdbBreakpointEnable (QString breakpoints) {
@@ -2240,7 +2260,9 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     if (executableLaunchMode() == "") {
         return;
     }
-    // check if breakpoint exists there
+    // First check if breakpoint exists there
+    // "-f --source \"/home/quangnm/Documents/GitHub/seer/stm32f1_blink/src/main.c\" --line 52"
+
     // if OpenOCD is running well, halt target then add breakpoint, then resume since on
     // embedded system, we cannot add hbreakpoint on runtime with gdb MI so this is workaround
     if (openocdWidget->isOpenocdRunning() == true && gdbProgram() == gdbMultiarchExePath() && \
@@ -4198,7 +4220,7 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
         {
             int stat = kill(_gdbmultiarchPid, signal);
             if (stat < 0) {
-                QMessageBox::warning(this, "Seer",
+                QMessageBox::warning(this, "Seer OpenOCD",
                                         QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
                                         QMessageBox::Ok);
             }
