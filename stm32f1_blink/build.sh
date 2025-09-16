@@ -1,3 +1,4 @@
+set -x
 TOP_DIR=${PWD}
 cd ..
 git submodule update --init --recursive

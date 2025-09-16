@@ -31,6 +31,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showOpcodeColumn               = false;
     _showSourceLines                = false;
     _notifyAssemblyTabShown         = true;
+    _enableOpenFile                 = true;
 
     // Setup UI
     setupUi(this);
@@ -599,7 +600,11 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
     }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
-
+        if (isOpenFileEnable() == false)
+        {
+            // wait until breakpoint -h is successfully added
+            return;
+        }
         //qDebug() << ":stack:" << text;
 
         //
@@ -786,6 +791,13 @@ void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
 }
 
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
+
+    if (isOpenFileEnable() == false)
+    {
+        // Alow bypass only 1 time
+        setEnableOpenFile(true);
+        return;
+    }
 
     // Must have a valid filename.
     if (file == "" || fullname == "") {
@@ -1361,3 +1373,12 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     }
 }
 
+// These 2 functions are used for temporarily disable handleOpenFile
+// To Fix bug: openocd open source at SIGINT during running
+void SeerEditorManagerWidget::setEnableOpenFile(bool state) {
+    _enableOpenFile = state;
+}
+
+bool SeerEditorManagerWidget::isOpenFileEnable() {
+    return _enableOpenFile;
+}

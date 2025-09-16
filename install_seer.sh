@@ -2,7 +2,6 @@ set -x
 #########################################################
 TOP_DIR=${PWD}
 #########################################################
-sudo rm -rf output/*
 sudo rm -f /usr/bin/seergdb
 sudo apt install -y debhelper dh-exec cmake build-essential mesa-common-dev libgl1-mesa-dev
 sudo apt install -y qt6-base-dev libqt6gui6 libqt6charts6-dev libqt6opengl6-dev \

@@ -2209,6 +2209,7 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
         // setNewHardwareBreakpointFlag(true);
         // _gdbMonitor->setNewHardBreakpointFlag();
         handleGdbInterruptSIGINT();
+        editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
         handleGdbCommand("-break-delete " + breakpoints);
         handleGdbGenericpointList();
         // if target is running
@@ -2270,6 +2271,7 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     {
         setNewHardwareBreakpointFlag(true);
         _gdbMonitor->setNewHardBreakpointFlag();
+        editorManagerWidget->setEnableOpenFile(false);                       // when add bp at runtime, seer display source code when receives SIGINT, so this will fix it
         handleGdbInterruptSIGINT();
         handleGdbCommand("-break-insert -h " + breakpoint);
         handleGdbGenericpointList();
