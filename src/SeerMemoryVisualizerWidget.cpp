@@ -300,7 +300,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
         // Ignore anything else.
     }
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerMemoryVisualizerWidget::handleRefreshButton () {
@@ -335,6 +335,7 @@ void SeerMemoryVisualizerWidget::handleHelpButton () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/MemoryVisualizer.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

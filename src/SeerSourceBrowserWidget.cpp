@@ -34,7 +34,7 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
 
-    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb"} ); // Default settings.
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb", "*.s", "*.S"} ); // Default settings.
     _headerFilePatterns = QStringList( {"*.hpp", "*.h", "*.ads"} );
     _miscFilePatterns   = QStringList( {"/usr/include/"} );
 
@@ -105,7 +105,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
 
         // Set up a map to look for duplicate entries.  QMap<fullname,file>
-        QMap<QString,QString> files;
 
         for (const auto& entry_text : files_list) {
 
@@ -113,13 +112,13 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
 
             //qDebug() << file_text << fullname_text;
-
+            
             // Skip duplicates
-            if (files.contains(fullname_text)) {
+            if (_files.contains(fullname_text)) {
                 continue;
             }
 
-            files.insert(fullname_text, file_text);
+            _files.insert(fullname_text, file_text);
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -157,7 +156,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
     sourceSearchLineEdit->clear();
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerSourceBrowserWidget::handleSessionTerminated () {
@@ -289,3 +288,6 @@ void SeerSourceBrowserWidget::deleteChildItems () {
     }
 }
 
+bool SeerSourceBrowserWidget::contains(const QString& file) {
+    return _files.contains(file);
+}

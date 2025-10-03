@@ -142,7 +142,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
     stackTreeWidget->resizeColumnToContents(5);
     stackTreeWidget->resizeColumnToContents(6);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerStackFramesBrowserWidget::handleStoppingPointReached () {

@@ -87,7 +87,7 @@ void SeerCheckpointsBrowserWidget::handleText (const QString& text) {
     checkpointsTreeWidget->resizeColumnToContents(3);
     checkpointsTreeWidget->resizeColumnToContents(4);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerCheckpointsBrowserWidget::handleStoppingPointReached () {

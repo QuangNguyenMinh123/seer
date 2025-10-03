@@ -77,6 +77,7 @@ void SeerVariableManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/VariableRegisterInfoBrowser.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

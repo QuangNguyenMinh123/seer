@@ -111,6 +111,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     actionVisualizers->setMenu(menuVisualizer);
 
+    // Make openocd menu invisible
+    menuOpenOCD->menuAction()->setVisible(false);
+
     // Set up control menu for recording.
     QActionGroup* recordDirectionActionGroup = new QActionGroup(this);
     recordDirectionActionGroup->addAction(actionControlRecordForward);
@@ -185,8 +188,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
 
-    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  _runStatus,      &SeerRunStatusIndicatorBox::handleText);
-    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   _runStatus,      &SeerRunStatusIndicatorBox::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  _runStatus,     &SeerRunStatusIndicatorBox::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   _runStatus,     &SeerRunStatusIndicatorBox::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   _runStatus,     &SeerRunStatusIndicatorBox::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   this,           &SeerMainWindow::handleText);
@@ -197,12 +201,27 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(gdbWidget,                         &SeerGdbWidget::stateChanged,                   this,           &SeerMainWindow::handleGdbStateChanged);
 
-    QObject::connect(_runStatus,                         &SeerRunStatusIndicatorBox::statusChanged,      this,           &SeerMainWindow::handleRunStatusChanged);
+    QObject::connect(_runStatus,                        &SeerRunStatusIndicatorBox::statusChanged,      this,           &SeerMainWindow::handleRunStatusChanged);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,                     gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
     // This handle button state when target state changes
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleStatusChanged);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleStatusChanged);
+    // Openocd signal and slots
+    // This handle when actionOpenOCDDebugModule is clicked
+    QObject::connect(actionOpenOCDDebugModule,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleDebugKernelModule);
+    QObject::connect(actionOpenOCDHelp,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleOpenOCDMainHelpButtonClicked);
+
+    // Handle Debug on Init, avoid thread disruption
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestContinue,                gdbWidget,      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestBreakList,               gdbWidget,      &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestBreakInsert,             gdbWidget,      &SeerGdbWidget::handleGdbBreakpointInsert);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestBreakEnable,             gdbWidget,      &SeerGdbWidget::handleGdbBreakpointEnable);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestBreakDisable,            gdbWidget,      &SeerGdbWidget::handleGdbBreakpointDisable);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestGdbCommand,              gdbWidget,      &SeerGdbWidget::handleGdbCommand);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestSendToSerial,            gdbWidget,      &SeerGdbWidget::handleSendToSerial);
+
     handleRecordSettingsChanged();
 
     //
@@ -222,6 +241,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 SeerMainWindow::~SeerMainWindow() {
+    handleTerminateExecutable();                    // QuangNM13: see if this could fix segmantation fault on exit.
 }
 
 void SeerMainWindow::setExecutableName (const QString& executableName) {
@@ -445,7 +465,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
     // openocd
     actionOpenOCDAttach->setVisible(false);
-    menuOpenOCD->setVisible(false);
+    menuOpenOCD->menuAction()->setVisible(false);
+
     // if OpenOCD tab exists, kill it along with any running OpenOCD process.
     if (gdbWidget->openOCDWidgetInstance()->openocdProcess())
     {
@@ -502,7 +523,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionControlNexti->setVisible(false);
         actionControlStepi->setVisible(false);
         // display attach button
-        // menubar->actionOpenOCD->setVisible(true);
+        menuOpenOCD->menuAction()->setVisible(true);
         actionOpenOCDAttach->setVisible(true);
         // launch gdb-multiarch and openocd
         gdbWidget->handleGdbMultiarchOpenOCDExecutable();
@@ -636,7 +657,11 @@ void SeerMainWindow::handleFileDebug () {
     setOpenOCDCommand(dlg.openOCDCommand());
     setGdbMultiarchExePath(dlg.gdbMultiarchExePath());
     setGdbPort(dlg.gdbPort());
+    setTelnetPort(dlg.telnetPort());
     setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
+    setBuiltInDocker(dlg.isBuiltInDocker());
+    setAbsoluteBuildFolderPath(dlg.absoluteBuildFolderPath());
+    setDockerBuildFolderPath(dlg.dockerBuildFolderPath());
     setKernelSymbolPath(dlg.kernelSymbolPath());
     setKernelCodePath(dlg.kernelCodePath());
     gdbWidget->setGdbMultiarchPid(0);           // clear current gdb-multiarch pid
@@ -856,7 +881,13 @@ void SeerMainWindow::handleHelpAbout () {
 void SeerMainWindow::handleTerminateExecutable () {
 
     gdbWidget->handleGdbTerminateExecutable();
+    gdbWidget->gdbMonitor()->setBuiltInDocker(false);
+    gdbWidget->setExecutableLaunchMode("");
+    handleGdbStateChanged();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
     _runStatus->handleTerminate();
+    menuOpenOCD->menuAction()->setVisible(false);
+    actionOpenOCDAttach->setVisible(false);
 }
 
 void SeerMainWindow::handleRestartExecutable () {
@@ -901,7 +932,13 @@ void SeerMainWindow::handleRestartExecutable () {
 
         gdbWidget->handleGdbCoreFileExecutable();
 
-    }else{
+    }else if (gdbWidget->executableLaunchMode() == "openocd") {
+        menuOpenOCD->menuAction()->setVisible(true);
+        actionOpenOCDAttach->setVisible(true);
+        gdbWidget->handleGdbMultiarchOpenOCDExecutable();
+
+    }
+    else{
         qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
     }
 }
@@ -964,7 +1001,7 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionControlTerminate->setToolTip("Detach from the current debugging session.");
 
         // Connect mode
-        }else if (gdbWidget->executableLaunchMode() == "connect") {
+        }else if (gdbWidget->executableLaunchMode() == "connect" || gdbWidget->executableLaunchMode() == "openocd") {
             // Disconnect
             actionGdbTerminate->setVisible(true);
             actionGdbTerminate->setText("Disconnect");
@@ -996,6 +1033,22 @@ void SeerMainWindow::handleGdbStateChanged () {
         actionGdbTerminate->setVisible(false);
         actionControlTerminate->setVisible(false);
 
+        // Enable execution button
+        actionControlContinue->setEnabled(true);
+        actionControlNext->setEnabled(true);
+        actionControlStep->setEnabled(true);
+        actionControlFinish->setEnabled(true);
+        actionControlInterrupt->setEnabled(true);
+        actionControlNexti->setEnabled(true);
+        actionControlStepi->setEnabled(true);
+        actionGdbContinue->setEnabled(true);
+        actionGdbNext->setEnabled(true);
+        actionGdbStep->setEnabled(true);
+        actionGdbFinish->setEnabled(true);
+        actionGdbNexti->setEnabled(true);
+        actionGdbStepi->setEnabled(true);
+        actionInterruptProcess->setEnabled(true);
+
         if (gdbWidget->backupLaunchMode() == "run" || gdbWidget->backupLaunchMode() == "start" ||
             gdbWidget->backupLaunchMode() == "rr"  || gdbWidget->backupLaunchMode() == "corefile") {
 
@@ -1014,7 +1067,7 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionControlRestart->setText("Reattach");
             actionControlRestart->setToolTip("Reattach the current debugging session.");
 
-        }else if (gdbWidget->backupLaunchMode() == "connect") {
+        }else if (gdbWidget->backupLaunchMode() == "connect" || gdbWidget->backupLaunchMode() == "openocd") {
             actionGdbRestart->setVisible(true);
             actionGdbRestart->setText("Reconnect");
             actionGdbRestart->setToolTip("Reconnect the current debugging session.");
@@ -1503,6 +1556,7 @@ void SeerMainWindow::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/MainWindow.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -1840,14 +1894,6 @@ void SeerMainWindow::setOpenOCDExePath (const QString& path) {
     gdbWidget->setOpenOCDExePath(path);
 }
 
-const QString& SeerMainWindow::gdbPort() {
-    return gdbWidget->gdbPort();
-}
-
-void SeerMainWindow::setGdbPort (const QString& port){
-    gdbWidget->setGdbPort(port);
-}
-
 const QString& SeerMainWindow::openOCDCommand() {
     return gdbWidget->openOCDCommand();
 }
@@ -1865,6 +1911,22 @@ void SeerMainWindow::setGdbMultiarchExePath (const QString& path) {
     gdbWidget->setGdbMultiarchExePath(path);
 }
 
+const QString& SeerMainWindow::gdbPort() {
+    return gdbWidget->gdbPort();
+}
+
+void SeerMainWindow::setGdbPort (const QString& port){
+    gdbWidget->setGdbPort(port);
+}
+
+const QString& SeerMainWindow::telnetPort() {
+    return gdbWidget->telnetPort();
+}
+
+void SeerMainWindow::setTelnetPort (const QString& port){
+    gdbWidget->setTelnetPort(port);
+}
+
 const QString& SeerMainWindow::gdbMultiarchCommand () {
     return gdbWidget->gdbMultiarchCommand();
 }
@@ -1872,6 +1934,38 @@ const QString& SeerMainWindow::gdbMultiarchCommand () {
 void SeerMainWindow::setGdbMultiarchCommand (const QString& command) {
     gdbWidget->setGdbMultiarchCommand(command);
 }
+
+/// ::Docker
+bool SeerMainWindow::isBuiltInDocker()
+{
+    return gdbWidget->isBuiltInDocker();
+}
+
+void SeerMainWindow::setBuiltInDocker(bool check)
+{
+    gdbWidget->setBuiltInDocker(check);
+}
+
+const QString SeerMainWindow::absoluteBuildFolderPath()
+{
+    return gdbWidget->absoluteBuildFolderPath();
+}
+
+void SeerMainWindow::setAbsoluteBuildFolderPath(const QString& path)
+{
+    gdbWidget->setAbsoluteBuildFolderPath(path);
+}
+
+const QString SeerMainWindow::dockerBuildFolderPath()
+{
+    return gdbWidget->dockerBuildFolderPath();
+}
+
+void SeerMainWindow::setDockerBuildFolderPath(const QString& path)
+{
+    return gdbWidget->setDockerBuildFolderPath(path);
+}
+
 // ::Kernel
 const QString& SeerMainWindow::kernelSymbolPath () {
     return gdbWidget->kernelSymbolPath();
@@ -1932,8 +2026,13 @@ void SeerMainWindow::handleStatusChanged(QString message) {
     {
         handleGdbTargetInterrupt();
     }
+    else if (message.startsWith("^done,stack"))   // target is halted, typically when finish button is clicked
+    {
+        handleGdbTargetInterrupt();
+    }
     else if (message.startsWith("*running"))      // target is running
     {
         handleGdbTargetRunning();
     }
+    
 }

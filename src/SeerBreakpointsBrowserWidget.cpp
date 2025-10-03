@@ -203,7 +203,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
   //breakpointsTreeWidget->resizeColumnToContents(13);
     breakpointsTreeWidget->resizeColumnToContents(14);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerBreakpointsBrowserWidget::handleStoppingPointReached () {

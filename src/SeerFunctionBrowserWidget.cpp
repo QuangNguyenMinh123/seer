@@ -170,7 +170,7 @@ void SeerFunctionBrowserWidget::handleText (const QString& text) {
     functionTreeWidget->sortByColumn(0, Qt::AscendingOrder);
     functionTreeWidget->setSortingEnabled(true);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerFunctionBrowserWidget::handleSessionTerminated () {

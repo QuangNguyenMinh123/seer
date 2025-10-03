@@ -190,7 +190,7 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
     printpointsTreeWidget->resizeColumnToContents(13);
     printpointsTreeWidget->resizeColumnToContents(14);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerPrintpointsBrowserWidget::handleStoppingPointReached () {

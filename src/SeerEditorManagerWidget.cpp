@@ -933,6 +933,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    // Immediately connect each new source code tab to SeerEditorManagerWidget slots
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -995,6 +997,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    // Immediately connect each new source code tab to SeerEditorManagerWidget slots
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1198,6 +1202,7 @@ void SeerEditorManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/CodeManager.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -1381,4 +1386,10 @@ void SeerEditorManagerWidget::setEnableOpenFile(bool state) {
 
 bool SeerEditorManagerWidget::isOpenFileEnable() {
     return _enableOpenFile;
+}
+
+// Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
+void SeerEditorManagerWidget::seekIdentifierForwarder(const QString& identifier)
+{
+    emit seekIdentifier(identifier);
 }

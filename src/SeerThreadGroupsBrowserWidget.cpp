@@ -113,7 +113,7 @@ void SeerThreadGroupsBrowserWidget::handleText (const QString& text) {
   //groupTreeWidget->resizeColumnToContents(3); // Don't resize.
     groupTreeWidget->resizeColumnToContents(4);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerThreadGroupsBrowserWidget::handleSessionTerminated () {

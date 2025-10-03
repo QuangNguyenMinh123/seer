@@ -154,7 +154,7 @@ void SeerStackDumpBrowserWidget::handleText (const QString& text) {
     stackTableWidget->resizeColumnToContents(4);
     stackTableWidget->resizeRowsToContents();
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerStackDumpBrowserWidget::handleStoppingPointReached () {

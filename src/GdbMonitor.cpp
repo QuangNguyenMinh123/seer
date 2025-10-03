@@ -10,6 +10,10 @@ static QLoggingCategory LC("seer.gdbmonitor");
 GdbMonitor::GdbMonitor (QObject* parent) : QObject(parent) {
     _process = 0;
     _countIgnoreFlag = 0;
+    // Docker
+    _isBuildInDocker    = false;
+    _absoluteBuildPath  = "";
+    _dockerBuildPath    = "";
 }
 
 GdbMonitor::~GdbMonitor () {
@@ -54,9 +58,6 @@ void GdbMonitor::handleReadyReadStandardError () {
         QString text(buf);
 
         qCDebug(LC) << text;
-
-        // Start broadcasting it around.
-        emit allTextOutput("from gdbmonitor1: " + text + "\n");
     }
 }
 
@@ -87,8 +88,14 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
         qCDebug(LC) << text;
 
-        // Start broadcasting it around.
-        emit allTextOutput("from gdbmonitor2: " + text + "\n");
+#if ENABLE_GDB_LOGOUT == 1
+        // Start broadcasting it around. For debugging
+        emit allTextOutput("from gdbmonitor: " + text + "\n");
+#endif
+
+        // If symbol is built in docker, then _dockerBuildPath shall be replace by _absoluteBuildPath
+        if (isBuiltInDocker())          // quangnm13: bug here
+            text.replace(dockerBuildFolderPath(), absoluteBuildFolderPath());
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {
@@ -129,8 +136,6 @@ void GdbMonitor::handleTextOutput (QString text) {
 
     qCDebug(LC) << "Ready to handle text output";
     qCDebug(LC) << text;
-
-    emit allTextOutput("from gdbmonitor3: " + text + "\n");
 
     if (text[0] == '~') {
         emit tildeTextOutput(text);
@@ -192,4 +197,39 @@ void GdbMonitor::removeQuickBreakpointFlag ()
 bool GdbMonitor::isAddingQuickBreakpoint()
 {
     return _countIgnoreFlag;
+}
+
+// If symbol is built in docker, then this would be helpful
+bool GdbMonitor::isBuiltInDocker()
+{
+    return _isBuildInDocker;
+}
+
+void GdbMonitor::setBuiltInDocker(bool check)
+{
+    _isBuildInDocker = check;
+}
+
+const QString GdbMonitor::absoluteBuildFolderPath()
+{
+    return _absoluteBuildPath;
+}
+
+void GdbMonitor::setAbsoluteBuildFolderPath(const QString& path)
+{
+    _absoluteBuildPath = path;
+    if (_absoluteBuildPath.endsWith('/'))       // If end with '/', chop it    
+        _absoluteBuildPath.chop(1);
+}
+
+const QString GdbMonitor::dockerBuildFolderPath()
+{
+    return _dockerBuildPath;
+}
+
+void GdbMonitor::setDockerBuildFolderPath(const QString& path)
+{
+    _dockerBuildPath = path;
+    if (_dockerBuildPath.endsWith('/'))         // If end with '/', chop it    
+        _dockerBuildPath.chop(1);
 }

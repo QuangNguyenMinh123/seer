@@ -316,6 +316,7 @@ void SeerPrintpointCreateDialog::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/Printpoints.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

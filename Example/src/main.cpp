@@ -23,7 +23,7 @@ int main() {
         cout << "\nAdvanced Math:" << endl;
         cout << "Factorial of 5 = " << factorial(5) << endl;
         cout << "Fibonacci of 7 = " << fibonacci(7) << endl;
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(20));
     }
     return 0;
 }

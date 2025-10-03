@@ -14,6 +14,7 @@
 #include <QtCore/QJsonValue>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDebug>
+#include <QtWidgets/QCheckBox>
 #include <QtGlobal>
 
 SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
@@ -86,6 +87,9 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableOpenOCDButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableOpenOCDButtonClicked);
     QObject::connect(openOCDKernelKernelSymbolPathButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDKernelSymbolPathButtonClicked);
     QObject::connect(openOCDKernelKernelDirPathButton,     &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDKernelDirPathButton);
+    QObject::connect(dockerCheckBox,                       &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDDockerCheckbox);
+    QObject::connect(absolutePathButton,                   &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDBuildFolderPathButton);
+    QObject::connect(openOCDMainHelpButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainHelpButtonClicked);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -682,14 +686,16 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     if (openocdModeJson.isEmpty() == false) {
 
         executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
-        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
         openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
         openOcdGdbMultiarchLineEdit             ->setText(openocdModeJson["gdbMultiarchExe"].toString());
+        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
+        openOCD_Telnet_Port_LineEdit            ->setText(openocdModeJson["telnetPort"].toString());
         openOCDGdbCommandLineEdit               ->setText(openocdModeJson["gdbMultiarchCommand"].toString());
+        dockerCheckBox                          ->setChecked(openocdModeJson["dockerCheckBox"].toBool());
+        absolutePathLineEdit                    ->setText(openocdModeJson["absolutePathLineEdit"].toString());
+        dockerPathLineEdit                      ->setText(openocdModeJson["dockerPathLineEdit"].toString());
         openOCDKernelKernelSymbolLineEdit       ->setText(openocdModeJson["kernelSymbolPath"].toString());
         openOCDKernelKernelDirLineEdit          ->setText(openocdModeJson["kernelCodePath"].toString());
-        openOCDKernelModuleSymbolPathLineEdit   ->setText(openocdModeJson["kernelModuleSymbolPath"].toString());
-        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["kernelModuleCodePath"].toString());
 
         setLaunchMode("openocd");
     }
@@ -817,14 +823,16 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         QJsonObject modeJson;
 
         modeJson["openocdExe"]              = executableOpenOCDPathLineEdit->text();
-        modeJson["gdbPort"]                 = openOCD_GDB_Port_LineEdit->text();
         modeJson["openocdCommand"]          = openOCDCommandLineEdit->toPlainText();
         modeJson["gdbMultiarchExe"]         = openOcdGdbMultiarchLineEdit->text();
+        modeJson["gdbPort"]                 = openOCD_GDB_Port_LineEdit->text();
+        modeJson["telnetPort"]              = openOCD_Telnet_Port_LineEdit->text();
         modeJson["gdbMultiarchCommand"]     = openOCDGdbCommandLineEdit->text();
+        modeJson["dockerCheckBox"]          = dockerCheckBox->isChecked();
+        modeJson["absolutePathLineEdit"]    = absolutePathLineEdit->text();
+        modeJson["dockerPathLineEdit"]      = dockerPathLineEdit->text();
         modeJson["kernelSymbolPath"]        = openOCDKernelKernelSymbolLineEdit->text();
         modeJson["kernelCodePath"]          = openOCDKernelKernelDirLineEdit->text();
-        modeJson["kernelModuleSymbolPath"]  = openOCDKernelModuleSymbolPathLineEdit->text();
-        modeJson["kernelModuleCodePath"]    = openOCD_GDB_Port_LineEdit->text();
 
         seerProjectJson["openocdmode"] = modeJson;
     }
@@ -932,12 +940,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID = 5   OpenOCD
     if (id == 5) {
-        if (openOCDTabWidget->currentIndex() == 3) {
-            postCommandsPlainTextEdit->setVisible(false);
-            preCommandsPlainTextEdit->setVisible(false);
-        } else {
+        if (openOCDTabWidget->currentIndex() == 1) {
             postCommandsPlainTextEdit->setVisible(true);
             preCommandsPlainTextEdit->setVisible(true);
+        } else {
+            postCommandsPlainTextEdit->setVisible(false);
+            preCommandsPlainTextEdit->setVisible(false);
         }
     }
 }
@@ -946,6 +954,7 @@ void SeerDebugDialog::handleHelpModeToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/DebugModes.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -954,6 +963,7 @@ void SeerDebugDialog::handleHelpRunToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/RunDebugMode.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -962,6 +972,7 @@ void SeerDebugDialog::handleHelpAttachToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/AttachDebugMode.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -970,6 +981,7 @@ void SeerDebugDialog::handleHelpConnectToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/ConnectDebugMode.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -978,6 +990,7 @@ void SeerDebugDialog::handleHelpRRToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/RRDebugMode.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -986,6 +999,7 @@ void SeerDebugDialog::handleHelpCorefileToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/CorefileDebugMode.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -1017,8 +1031,8 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
 }
 
 /***********************************************************************************************************************
- * OpenOCD getter and setter from LineEdit                                                                      *
-***********************************************************************************************************************/
+ * OpenOCD getter and setter from LineEdit                                                                             *
+ **********************************************************************************************************************/
 const QString SeerDebugDialog::openOCDExePath() {
     return executableOpenOCDPathLineEdit->text();
 }
@@ -1033,6 +1047,14 @@ const QString SeerDebugDialog::gdbPort() {
 
 void SeerDebugDialog::setGdbPort (const QString& port){
     openOCD_GDB_Port_LineEdit->setText(port);
+}
+
+const QString SeerDebugDialog::telnetPort() {
+    return openOCD_Telnet_Port_LineEdit->text();
+}
+
+void SeerDebugDialog::setTelnetPort (const QString& port){
+    openOCD_Telnet_Port_LineEdit->setText(port);
 }
 
 const QString SeerDebugDialog::openOCDCommand() {
@@ -1061,6 +1083,36 @@ const QString SeerDebugDialog::gdbMultiarchCommand () {
 void SeerDebugDialog::setGdbMultiarchCommand (const QString& command) {
     openOCDGdbCommandLineEdit->setText(command);
 }
+// :: Docker
+bool SeerDebugDialog::isBuiltInDocker()
+{
+    return dockerCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setBuiltInDocker(bool check)
+{
+    dockerCheckBox->setChecked(check);
+}
+
+const QString SeerDebugDialog::absoluteBuildFolderPath()
+{
+    return absolutePathLineEdit->text();
+}
+
+void SeerDebugDialog::setAbsoluteBuildFolderPath(const QString& path)
+{
+    return absolutePathLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::dockerBuildFolderPath()
+{
+    return dockerPathLineEdit->text();
+}
+
+void SeerDebugDialog::setDockerBuildFolderPath(const QString& path)
+{
+    return dockerPathLineEdit->setText(path);
+}
 // ::Kernel
 const QString SeerDebugDialog::kernelSymbolPath () {
     return openOCDKernelKernelSymbolLineEdit->text();
@@ -1079,30 +1131,33 @@ void SeerDebugDialog::setKernelCodePath (const QString& path){
 }
 /***********************************************************************************************************************
  * OpenOCD Slots                                                                                                       *
-***********************************************************************************************************************/
+ **********************************************************************************************************************/
 // Do this when OpenOCD Tab -> Main -> Default Button clicked
 void SeerDebugDialog::handleOpenOCDDefaultButtonClicked() {
     QString defaultOpenOCDPath = "/usr/local/bin/openocd";
     QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
     QString defaultGDBPort = "3333";
+    QString defaultTelnetPort = "4444";
     executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
     openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
     openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
+    openOCD_Telnet_Port_LineEdit->setText(defaultTelnetPort);
 }
 // When OpenOCD Tab changed
 void SeerDebugDialog::handleOpenOCDTabChanged(int id)
 {
-    // When Kernel Module Tab is selected, hide pre/post gdb commands
-    if (id == 3)
-    {
-        postCommandsPlainTextEdit->setVisible(false);
-        preCommandsPlainTextEdit->setVisible(false);
-    }
-    else    // Every other tab selected, show pre/post gdb commands
+    // When gdb Tab is selected, hide pre/post gdb commands
+    if (id == 1)
     {
         postCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setVisible(true);
     }
+    else    // Every other tab selected, don't show pre/post gdb commands
+    {
+        postCommandsPlainTextEdit->setVisible(false);
+        preCommandsPlainTextEdit->setVisible(false);
+    }
+    
 }
 
 void SeerDebugDialog::handleExecutableOpenOCDButtonClicked () {
@@ -1127,4 +1182,35 @@ void SeerDebugDialog::handleOpenOCDKernelDirPathButton () {
     if (name != "") {
         setKernelCodePath(name);
     }
+}
+
+void SeerDebugDialog::handleOpenOCDDockerCheckbox()
+{
+    if (dockerCheckBox->isChecked())
+    {
+        absolutePathLineEdit->setEnabled(true);
+        dockerPathLineEdit->setEnabled(true);
+    }
+    else
+    {
+        absolutePathLineEdit->setEnabled(false);
+        dockerPathLineEdit->setEnabled(false);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDBuildFolderPathButton () {
+    QString name = QFileDialog::getExistingDirectory(this, "Select build folder.", absoluteBuildFolderPath(), \
+                                                        QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setAbsoluteBuildFolderPath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDMainHelpButtonClicked()
+{
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
+    help->loadFile(":/seer/resources/help/OpenOCDHelp.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
+    help->exec();
 }

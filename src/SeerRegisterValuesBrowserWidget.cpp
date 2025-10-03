@@ -213,7 +213,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
     registersTreeWidget->resizeColumnToContents(2);
     registersTreeWidget->resizeColumnToContents(3);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {

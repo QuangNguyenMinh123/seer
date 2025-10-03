@@ -87,7 +87,7 @@ void SeerSkipBrowserWidget::handleText (const QString& text) {
     skipTreeWidget->resizeColumnToContents(4);
     skipTreeWidget->resizeColumnToContents(5);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerSkipBrowserWidget::handleSessionTerminated () {

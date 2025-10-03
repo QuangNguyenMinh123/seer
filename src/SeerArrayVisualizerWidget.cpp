@@ -719,6 +719,7 @@ void SeerArrayVisualizerWidget::handleHelpButton () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/ArrayVisualizer.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

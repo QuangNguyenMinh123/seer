@@ -203,7 +203,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
         break;
     }
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {

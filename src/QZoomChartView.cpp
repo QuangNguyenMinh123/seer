@@ -94,7 +94,7 @@ void QZoomChartView::mouseMoveEvent (QMouseEvent* event) {
 void QZoomChartView::mouseReleaseEvent (QMouseEvent* event) {
 
     if (_isDragging) {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         _isDragging = false;
     }
 

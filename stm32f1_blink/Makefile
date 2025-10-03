@@ -78,10 +78,10 @@ COMMON_FLAGS := -mthumb -mcpu=$(CPU) -mfloat-abi=soft
 LDFILE := $(DEVICE_DIR)/Source/Templates/gcc/linker/$(MCU_VARIANT_UC)_FLASH.ld
 
 ASFLAGS := $(COMMON_FLAGS)
-CFLAGS := $(COMMON_FLAGS) -Wall -g -Os
+CFLAGS := $(COMMON_FLAGS) -Wall -g -O0
 CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -nostdlib $(INCS) $(DEFS)
-LDFLAGS := $(COMMON_FLAGS) -Os -L$(CMSIS_DIR)/Lib
+LDFLAGS := $(COMMON_FLAGS) -O0 -L$(CMSIS_DIR)/Lib
 LDFLAGS += --specs=nano.specs --specs=nosys.specs
 LDFLAGS += -Wl,--gc-sections,--relax
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,-T$(LDFILE)

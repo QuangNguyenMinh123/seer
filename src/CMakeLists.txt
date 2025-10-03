@@ -1,12 +1,10 @@
-cmake_minimum_required(VERSION 3.21.0)          # QuangNM13 QT v6.6
+cmake_minimum_required(VERSION 3.21.0)
 
 project(seergdb VERSION 2.6.0 LANGUAGES CXX)
-set(QT_VERSION_MAJOR 6)                         # QuangNM13 QT v6.6
-set(QT_REQUIRED_VERSION 6.6)                    # QuangNM13 QT v6.6
+set(QT_VERSION_MAJOR 6)
+set(QT_REQUIRED_VERSION 6.6)
 
 set(PROJECT_NAME seergdb)
-set(DCMAKE_PREFIX_PATHn /home/quangnm/Qt/6.6.0) # QuangNM13 QT v6.6
-set(LD_LIBRARY_PATH /home/quangnm/Qt/6.6.0/lib) # QuangNM13 QT v6.6
 
 if(NOT DEFINED QTVERSION)
     set(QTVERSION "QT6" CACHE STRING "" FORCE)
@@ -37,8 +35,9 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
     find_package(Qt6 COMPONENTS REQUIRED OpenGL)
+    find_package(Qt6 COMPONENTS REQUIRED SerialPort)
 
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -49,7 +48,7 @@ elseif(${QTVERSION} STREQUAL "QT5")
     find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt5 COMPONENTS REQUIRED Charts)
 
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
@@ -157,6 +156,7 @@ set(HEADER_FILES
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
     SeerOpenOCDWidget.h
+    SeerOpenOCDDebugOnInit.h
     )
 
 set(SOURCE_FILES
@@ -260,6 +260,7 @@ set(SOURCE_FILES
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
     SeerOpenOCDWidget.cpp
+    SeerOpenOCDDebugOnInit.cpp
     seergdb.cpp
     )
 
@@ -290,8 +291,13 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 if(${QTVERSION} STREQUAL "QT6")
-    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL)
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL Qt6::SerialPort)
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
 
+# Global macro, turn ENABLE_GDB_LOGOUT=1 to enable gdb logout
+target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+        ENABLE_GDB_LOGOUT=1
+)

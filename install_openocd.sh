@@ -23,6 +23,6 @@ make -j4
 sudo make install
 cd ..
 cd openocd
-./configure --enable-ftdi --enable-ft232r --enable-jlink --enable-armjtagew --enable-parport
+./configure --enable-ftdi --enable-ft232r --enable-jlink --enable-armjtagew --enable-parport --enable-stlink
 make -j4
 sudo make install

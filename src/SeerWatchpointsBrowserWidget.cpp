@@ -336,7 +336,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
   //watchpointsTreeWidget->resizeColumnToContents(16);
     watchpointsTreeWidget->resizeColumnToContents(17);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerWatchpointsBrowserWidget::handleStoppingPointReached () {

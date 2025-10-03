@@ -115,7 +115,7 @@ void SeerTypeBrowserWidget::handleText (const QString& text) {
     typeTreeWidget->sortByColumn(0, Qt::AscendingOrder);
     typeTreeWidget->setSortingEnabled(true);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerTypeBrowserWidget::handleSessionTerminated () {

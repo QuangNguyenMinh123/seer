@@ -77,6 +77,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                                setOpenOCDExePath                   (const QString& path);
         const QString&                      gdbPort                             ();
         void                                setGdbPort                          (const QString& port);
+        const QString&                      telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
         const QString&                      openOCDCommand                      ();
         void                                setOpenOCDCommand                   (const QString& command);
         // ::GDB Multiarch
@@ -84,6 +86,14 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                                setGdbMultiarchExePath              (const QString& path);
         const QString&                      gdbMultiarchCommand                 ();
         void                                setGdbMultiarchCommand              (const QString& command);
+        // ::Docker
+        // ::Docker
+        bool                                isBuiltInDocker                     ();
+        void                                setBuiltInDocker                    (bool check);
+        const QString                       absoluteBuildFolderPath             ();
+        void                                setAbsoluteBuildFolderPath          (const QString& path);
+        const QString                       dockerBuildFolderPath               ();
+        void                                setDockerBuildFolderPath            (const QString& path);
         // ::Kernel
         const QString&                      kernelSymbolPath                    ();
         void                                setKernelSymbolPath                 (const QString& path);

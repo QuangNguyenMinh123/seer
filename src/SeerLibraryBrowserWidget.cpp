@@ -95,7 +95,7 @@ void SeerLibraryBrowserWidget::handleText (const QString& text) {
 
     librarySearchLineEdit->clear();
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerLibraryBrowserWidget::handleSessionTerminated () {

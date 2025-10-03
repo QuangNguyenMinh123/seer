@@ -102,6 +102,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTextSearchToolButtonClicked   ();
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
+        void                                            seekIdentifierForwarder             (const QString& identifier);
 
     signals:
         void                                            refreshBreakpointsList              ();
@@ -126,6 +127,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
+        void                                            seekIdentifier                      (const QString& identifier);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();

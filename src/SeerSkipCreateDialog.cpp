@@ -50,6 +50,7 @@ void SeerSkipCreateDialog::handleHelpToolButton () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/Skips.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

@@ -148,7 +148,7 @@ void SeerAdaTasksBrowserWidget::handleText (const QString& text) {
     adaTaskTreeWidget->resizeColumnToContents(6);
     adaTaskTreeWidget->resizeColumnToContents(7);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerAdaTasksBrowserWidget::handleStoppingPointReached () {

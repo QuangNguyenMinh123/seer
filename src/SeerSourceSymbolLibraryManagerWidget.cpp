@@ -104,6 +104,7 @@ void SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/SourceSymbolLibraryInfoBrowser.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

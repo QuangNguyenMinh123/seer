@@ -253,7 +253,7 @@ void SeerImageVisualizerWidget::handleText (const QString& text) {
         // Ignore anything else.
     }
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerImageVisualizerWidget::handleRefreshButton () {
@@ -332,6 +332,7 @@ void SeerImageVisualizerWidget::handleHelpButton () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/ImageVisualizer.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }

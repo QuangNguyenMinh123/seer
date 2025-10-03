@@ -115,7 +115,7 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
     localsTreeWidget->resizeColumnToContents(2);
     localsTreeWidget->resizeColumnToContents(3);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerStackLocalsBrowserWidget::handleStoppingPointReached () {

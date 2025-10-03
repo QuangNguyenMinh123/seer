@@ -3,7 +3,8 @@ build
 debian
 obj-x86_64-linux-gnu
 build-DebugSeer-Desktop-Debug
-Example
+Example/obj
+Example/math_toolkit
 openocd
 libjaylink
 nucleo_blink/

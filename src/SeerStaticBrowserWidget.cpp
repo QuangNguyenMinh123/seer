@@ -134,7 +134,7 @@ void SeerStaticBrowserWidget::handleText (const QString& text) {
     staticTreeWidget->sortByColumn(0, Qt::AscendingOrder);
     staticTreeWidget->setSortingEnabled(true);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerStaticBrowserWidget::handleSessionTerminated () {

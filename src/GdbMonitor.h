@@ -14,7 +14,14 @@ class GdbMonitor : public QObject {
 
         void            setProcess                      (QProcess* process);
         QProcess*       process                         ();
-        void            setNewHardBreakpointFlag             ();
+        void            setNewHardBreakpointFlag        ();
+        // Getter and setter for docker
+        bool            isBuiltInDocker                 ();
+        void            setBuiltInDocker                (bool check);
+        const QString   absoluteBuildFolderPath         ();
+        void            setAbsoluteBuildFolderPath      (const QString& path);
+        const QString   dockerBuildFolderPath           ();
+        void            setDockerBuildFolderPath        (const QString& path);
 
     signals:
         void            allTextOutput                   (const QString& text);
@@ -40,6 +47,10 @@ class GdbMonitor : public QObject {
         bool            isAddingQuickBreakpoint        ();
         QProcess*       _process;
         int             _countIgnoreFlag;
+        // Docker, specifically for openocd 
+        bool                        _isBuildInDocker;
+        QString                     _absoluteBuildPath;
+        QString                     _dockerBuildPath;
 };
 
 #endif

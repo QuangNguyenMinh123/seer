@@ -198,7 +198,7 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
     threadTreeWidget->resizeColumnToContents(12);
     threadTreeWidget->resizeColumnToContents(13);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {

@@ -143,7 +143,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
     argumentsTreeWidget->resizeColumnToContents(2);
     argumentsTreeWidget->resizeColumnToContents(3);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {

@@ -250,7 +250,7 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
   //catchpointsTreeWidget->resizeColumnToContents(11);
     catchpointsTreeWidget->resizeColumnToContents(12);
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerCatchpointsBrowserWidget::handleStoppingPointReached () {

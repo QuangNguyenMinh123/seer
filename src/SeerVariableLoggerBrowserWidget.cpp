@@ -113,7 +113,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
     }
 
     // Set the cursor back.
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerVariableLoggerBrowserWidget::handleSessionTerminated () {

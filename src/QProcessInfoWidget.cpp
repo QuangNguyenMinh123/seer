@@ -158,7 +158,7 @@ void QProcessInfoWidget::refreshList () {
 
     refreshView();
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void QProcessInfoWidget::refreshView () {

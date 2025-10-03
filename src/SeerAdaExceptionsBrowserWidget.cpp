@@ -84,7 +84,7 @@ void SeerAdaExceptionsBrowserWidget::handleText (const QString& text) {
 
     adaExceptionsSearchLineEdit->clear();
 
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SeerAdaExceptionsBrowserWidget::handleSessionTerminated () {
