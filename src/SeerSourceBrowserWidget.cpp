@@ -288,6 +288,14 @@ void SeerSourceBrowserWidget::deleteChildItems () {
     }
 }
 
-bool SeerSourceBrowserWidget::contains(const QString& file) {
-    return _files.contains(file);
+const QString& SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression)
+{
+    QMap<QString, QString>::const_iterator it;
+    for (it = _files.constBegin(); it != _files.constEnd(); ++it) {
+        if (it.value().endsWith(expression)) {
+            return it.key();
+        }
+    }
+    static const QString empty;
+    return empty;
 }

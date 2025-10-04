@@ -8,13 +8,13 @@
 3. Start GDB-multiarch process                                                                  ✓ 
 4. Connect GDB-multiarch to OpenOCD port                                                        ✓
 5. display source code debug on Stm32                                                           ✓
-6. on Breakpoints/Watchpoints Tab ..., Can i remove some col, like number, adress, ...?
-7. Can i add dock feature to every tab?
+6. on Breakpoints/Watchpoints Tab ..., Can i remove some col, like number, adress, ...?         ✗ later
+7. Can i add dock feature to every tab?                                                         ✗ later
 8. Add OpenOCD -> add insmode kernel module.                                                    ✓
 9. Add help, readme     (minimum priority)                                                      ✓
 10. Add feature: disable actionControlNext, actionControlStep,actionControlFinish               ✓
     while target is running and enable them when target is halted (this can fix some bug)
-11. check: test stepi and nexti on openocd (need to fix segment fault on assembly)
+11. check: test stepi and nexti on openocd (need to fix segment fault on assembly)              ✗ later
 12. Add multiple backtrace pointer color (like vscode) (already deployed)                       ✗
 13. Debug kernel (HIGH PRIORITY)                                                                ✓
 14. Debug kernel module on init (HIGH PRIORITY)                                                 ✓
@@ -25,7 +25,7 @@
     on T32, when i singlely click on  a function/var, it instantly show its value. Can i do that on seer
 18. Can I go back to previous tab like vscode?
 19. On Source info: search regex...: can I input kernel/module/main.c and seer look that for me?
-20. Check file availability before run debug on init, load kernel, kernel module ...
+20. Check file availability before run debug on init, load kernel, kernel module ...            ✓
 21. When bp is disabled, enabled, will its status be displayed accordingly?
             (yes, it works on desktop app but not with openocd)                                 ✓
 22. Why don't we add macro to enable/disable debug on cmakelist?                                ✓ enable on cmake

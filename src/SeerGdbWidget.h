@@ -267,7 +267,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleSyncBreakEnable               (QString bp);
         void                                handleSyncBreakDisable              (QString bp);
         void                                handleSyncManualGdbCommand          (QString expression);
-        void                                handleSyncSetConnection             (QString status);
         void                                handleSyncSendToSerial              (QString path, QString expression);
         void                                handleSyncRefreshSource             ();
         // Handler for Sync function
@@ -458,7 +457,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                requestBreakInsert                  (QString bp);
         void                                requestBreakEnable                  (QString bp);
         void                                requestBreakDisable                 (QString bp);
-        void                                requestChangeConnection             (QString status);
         void                                requestGdbCommand                   (QString expression);
         void                                requestSendToSerial                 (QString path, QString expression);
         void                                requestRefreshSource                ();
@@ -607,4 +605,5 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QMap<QString,QString>               _mapListBpStatus;
         // List of kernel module address
         QMap<QString, QString>              _mapKernelModuleAddress;
+        int                                 _moduleInitLineNo = 0;
 };

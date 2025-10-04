@@ -37,6 +37,7 @@
 #include <errno.h>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QTextStream>
 
 #include "ui_SeerGdbWidget.h"
 static QLoggingCategory LC("seer.gdbwidget");
@@ -444,9 +445,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
 #endif
     // For debug on init
-    QObject::connect(this,                                                      &SeerGdbWidget::requestChangeConnection,                                                    this,                                                           &SeerGdbWidget::handleSyncSetConnection);
     QObject::connect(this,                                                      &SeerGdbWidget::requestRefreshSource,                                                       this,                                                           &SeerGdbWidget::handleGdbExecutableSources);
-    // QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
     // For handling tracing functions, variables and types
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::seekIdentifier,                                                   this,                                                           &SeerGdbWidget::handleSeekIdentifier);
 
@@ -2304,7 +2304,7 @@ void SeerGdbWidget::handleGdbStackListFrames () {
         return;
     }
 
-    handleGdbCommand("-stack-list-frames");
+    handleGdbCommand("-stack-list-frames 0 100");         // on u-boot, stack frame might last for hundred levels. Limit this to 100 levels to avoid gdb hang
 }
 
 void SeerGdbWidget::handleGdbStackSelectFrame (int frameno) {
@@ -2328,7 +2328,7 @@ void SeerGdbWidget::handleGdbStackListLocals () {
         return;
     }
 
-    handleGdbCommand("-stack-list-variables --all-values");
+    handleGdbCommand("-stack-list-variables --all-values");    // on u-boot, stack frame might last for hundred levels. Limit this to 100 levels to avoid gdb hang
 }
 
 void SeerGdbWidget::handleGdbStackListArguments () {
@@ -2337,7 +2337,7 @@ void SeerGdbWidget::handleGdbStackListArguments () {
         return;
     }
 
-    handleGdbCommand("-stack-list-arguments --all-values");
+    handleGdbCommand("-stack-list-arguments --all-values 0 100");    // on u-boot, stack frame might last for hundred levels. Limit this to 100 levels to avoid gdb hang
 }
 
 void SeerGdbWidget::handleGdbGenericpointList () {
@@ -4701,7 +4701,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
         }
 
         // Set or reset some things.
-        handleGdbCommand(QString("-environment-cd ") + kernelCodePath());
+        handleGdbCommand(QString("-environment-cd \"") + kernelCodePath() + "\"");
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
@@ -4768,6 +4768,16 @@ void SeerGdbWidget::handleDebugKernelModule()
     _kernelModuleSourceCodePath = dlg.kernelModuleSourceCodePath();
     _serialPortPath             = dlg.serialPortPath();
     
+    if (_kernelModuleSymbolPath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module symbol is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+    if (_kernelModuleSourceCodePath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module source code is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
     if ( Seer::isFileExistNotify(_kernelModuleSymbolPath) == false)
         return;
     if ( Seer::isDirExistNotify(_kernelModuleSourceCodePath) == false)
@@ -4787,7 +4797,6 @@ void SeerGdbWidget::handleDebugKernelModule()
     //          thus it couldn't receive any data from gdb
     // Solution: Multithread for task parallel execution, keeping mainwindow alive while child thread handle reading data
     //           Mutex and conditional variable for synchronization between SeerGdbWidget::handleText and child thread
-    handleSyncSetConnection("connect");
     _workerThread = QThread::create([this]() {
         debugOnInitHandler();                    // Run your background logic here
     });
@@ -4815,9 +4824,38 @@ void SeerGdbWidget::debugOnInitHandler()
 
     // 3. Add temp breakpoint to module_init at kernel/module/main.c
     // First, look for full name of file kernel/module/main.c
+    QString module_init_file = sourceLibraryManagerWidget->sourceBrowserWidget()->findFileWithRegrex("kernel/module/main.c");
+    int lineNumber = 0;
+    if (module_init_file.isEmpty())
+    {
+        QMessageBox::warning(this, "Seer", "Debug on Init fail!\n Cannot find kernel/module/main.c.", QMessageBox::Ok);
+        return;
+    }
+    else            // Now, let check which line has "return do_init_module(mod)"
+    {
+        if (!(_moduleInitLineNo > 0))
+        {
+            QFile file(module_init_file);
 
-    // Now, let check which line has "return do_init_module(mod)"
-    handleSyncBreakInsert("-t -f --source \"/home/g703808/Documents/standard-ipq-repo/IPQ5424/O_0450/qca-networking-2025-ath-spf-13-0_qca_oem/qsdk/build_dir/target-aarch64_cortex-a55+neon-vfpv4_musl/linux-ipq54xx_generic/linux-6.6.47/kernel/module/main.c\" --line 3009");
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QMessageBox::warning(this, "Seer", "Debug on Init fail!\n Cannot open file kernel/module/main.c.", QMessageBox::Ok);
+                return;
+            }
+            QTextStream in(&file);
+
+            while (!in.atEnd()) {
+                QString line = in.readLine();
+                if (line.contains("return do_init_module")) {
+                    _moduleInitLineNo = lineNumber + 1;
+                    break;
+                }
+                ++lineNumber;
+            }
+        }
+    }
+
+    QString expression = "-t -f --source \"" + module_init_file + "\" --line " + QString::number(_moduleInitLineNo);;
+    handleSyncBreakInsert(expression);
     handleSyncGdbContinue();                        // -exec-continue -> *stopped,reason="breakpoint-hit"
 
     // 4. Send command insmod to serial terminal 
@@ -4831,10 +4869,9 @@ void SeerGdbWidget::debugOnInitHandler()
     _debugOnInitStopMutex.unlock();
     QString gdbReadExpr = "-data-evaluate-expression \"*mod->sect_attrs->attrs@mod->sect_attrs->nsections\"";
     handleSyncManualGdbCommand(gdbReadExpr);
-
+    
     // 6. Load kernel module to gdb-multiarch with provided address
-    QString koPath = "/home/g703808/Desktop/board-recovery/example/hello.ko";
-    QString gdbLoadExpr = "add-symbol-file " + koPath + " ";
+    QString gdbLoadExpr = "add-symbol-file " + _kernelModuleSymbolPath + " ";
     for (auto it = _mapKernelModuleAddress.begin(); it != _mapKernelModuleAddress.end(); it ++)
     {
         gdbLoadExpr += "-s " + it.key() + " " + it.value() + " ";
@@ -4842,8 +4879,7 @@ void SeerGdbWidget::debugOnInitHandler()
     handleSyncManualGdbCommand(gdbLoadExpr);
 
     // load source code
-    QString dirPath = "/home/g703808/Desktop/board-recovery/example";
-    QString loadCmd = "directory " + dirPath;
+    QString loadCmd = "directory " + _kernelModuleSourceCodePath;
     handleSyncManualGdbCommand(loadCmd);            // -> ^done
     // now refresh source browser to load new kernel module source code
     handleSyncRefreshSource();
@@ -4861,16 +4897,9 @@ void SeerGdbWidget::debugOnInitHandler()
             handleSyncBreakDisable(it.key());
     }
     setDebugOnInitFlag(false);                      // lower this flag, indicating debug on init thread ended
-     // We don't need to handle ^done,BreakpointTable event, equal to handleSyncSetConnection("disconnect");
-    emit requestChangeConnection("disconnect");
 
-pass:
     QMessageBox::warning(this, "Seer", "Debug on Init done.", QMessageBox::Ok);
     return;
-fail_timeout:
-    QMessageBox::warning(this, "Seer", "Debug on Init fail!\n Timeout.", QMessageBox::Ok);
-    return;
-
 }
 
 /***********************************************************************************************************************
@@ -4926,19 +4955,6 @@ void SeerGdbWidget::handleSyncBreakDisable (QString bp)
     emit requestBreakDisable(bp);
     _debugOnInitHandleBpCv.wait(&_debugOnInitHandleBpMutex);
     _debugOnInitHandleBpMutex.unlock();
-}
-
-// To establish connection to
-void SeerGdbWidget::handleSyncSetConnection(QString status)
-{
-    if (status == "connect")
-    {
-        QObject::connect(_gdbMonitor, &GdbMonitor::caretTextOutput, this, &SeerGdbWidget::handleText);
-    }
-    else if (status == "disconnect")
-    {
-        QObject::disconnect(_gdbMonitor, &GdbMonitor::caretTextOutput, this, &SeerGdbWidget::handleText);
-    }
 }
 
 void SeerGdbWidget::handleSyncManualGdbCommand(QString expression)
