@@ -168,8 +168,10 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 }
 
                 QString old_text = item->text(1);
-                old_text = old_text.replace("\\\"", "\"");
-                value_text = value_text.replace("\\\"", "\"");
+                old_text.replace("\\\"", "\"");
+                old_text.remove('\\');
+                value_text.replace("\\\"", "\"");
+                value_text.remove('\\');
                 if (old_text == "")
                 {
                     // if empty -> first time. Pass the same text for old and new
@@ -177,10 +179,20 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 }
                 else
                 {
-                    if (old_text.front() == '{' && old_text.back() == '}') {
-                        old_text = Seer::filterBareNewLines(old_text);
-                    }
+                    old_text = Seer::filterBareNewLines(old_text);
                     handleItemCreate (item, value_text, old_text);
+                    // if (!old_text.startsWith("Structure has") && !old_text.startsWith("No symbol") == '}') {
+                    //     old_text = Seer::filterBareNewLines(old_text);
+                    //     handleItemCreate (item, value_text, old_text);
+                    // }
+                    // else
+                    // {
+                    //     // In some cases, old_text might have value like "Structure has no component named operator*" or
+                    //     // "No symbol "symbol" in current context" when variable is out of scope. By pass it
+                    //     int stop = 0;
+                    //     Q_UNUSED(stop);
+                    // }
+                    
                 }
 
                 emit raiseTab();
@@ -211,6 +223,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
                 // Set the text with the error message.
                 item->setText(1, Seer::filterEscapes(msg_text));
+                item->setText(2, id_text);
                 item->setText(3, "used");
             }
 
@@ -351,7 +364,6 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     // Fill in parent item. Whether is a simple or complex entry.
     parentItem->setText(0, name_text);
     parentItem->setText(1, Seer::filterEscapes(value_text));
-    parentItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
     parentItem->setText(2, id_text);
     parentItem->setText(3, "reused");
 
@@ -423,23 +435,30 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     // Convert to a list of name/value pairs.
     QStringList nv_pairs        = Seer::parseCommaList(text, '{', '}');
     QStringList nv_old_pairs    = Seer::parseCommaList(captureOld1, '{', '}');
-    if (old_text != value_text)
-    {
-        parentItem->setForeground(0, QBrush(Qt::red));   // Red text
-        parentItem->setForeground(1, QBrush(Qt::red));  // Blue text
-    }
-    else
-    {
-        parentItem->setForeground(0, QBrush(Qt::black));   // Red text
-        parentItem->setForeground(1, QBrush(Qt::black));  // Blue text
+
+    QFont parentFont = parentItem->font(0);
+    parentFont.setBold(old_text != value_text);     // if value has changed -> set font to bold
+    parentItem->setFont(0, parentFont);
+    parentItem->setFont(1, parentFont);
+
+    // If old_text havs value like "Structure has no component named operator*" or "No symbol "symbol" in current context" 
+    // Then variable is out of scope, don't read pair
+    bool parse_old_pair = false;
+    if (!old_text.startsWith("Structure has") && !old_text.startsWith("No symbol")) {
+        parse_old_pair = true;
     }
     // Go through each pair and add the name and its value to the tree.
     for (int i = 0; i < nv_pairs.size(); ++i) {
         QString nv      = nv_pairs[i];
-        QString nv_old  = nv_old_pairs[i];
+        QString nv_old ;
+        if (parse_old_pair)
+            nv_old = nv_old_pairs[i];
             
         QStringPair pair        = Seer::parseNameValue(nv, '=');
-        QStringPair old_pair    = Seer::parseNameValue(nv_old, '=');
+        QStringPair old_pair    = {0, "No symbol"};
+        if (parse_old_pair)
+            old_pair = Seer::parseNameValue(nv_old, '=');
+        
         // Look for the existing child, if any so we can reuse it.
         QTreeWidgetItem* childItem = 0;
         for (int i=0; i<parentItem->childCount(); i++) {
@@ -450,16 +469,14 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
                 childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                 childItem->setText(2, id_text);
                 childItem->setText(3, "reused");
-                if (pair.second != old_pair.second)
-                {
-                    childItem->setForeground(0, QBrush(Qt::red));   // Red text
-                    childItem->setForeground(1, QBrush(Qt::red));  // Blue text
-                }
-                else
-                {
-                    childItem->setForeground(0, QBrush(Qt::black));   // Gray text
-                    childItem->setForeground(1, QBrush(Qt::black));  // Gray text
-                }
+
+                QFont childFontCol0 = childItem->font(0);
+                QFont childFontCol1 = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+                childFontCol0.setBold(pair.second != old_pair.second);
+                childFontCol1.setBold(pair.second != old_pair.second);
+                childItem->setFont(0, childFontCol0);
+                childItem->setFont(1, childFontCol1);
+
                 break;
             }
         }
@@ -475,8 +492,6 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
 
             parentItem->addChild(childItem);
         }
-        QString test0 = childItem->text(0);
-        QString test1 = childItem->text(1);
         handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), old_pair.second);
     }
 }
