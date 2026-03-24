@@ -3,10 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerKeysConfigPage.h"
-#include <QtWidgets/QKeySequenceEdit>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
 #include <QtCore/QDebug>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QLineEdit>
+#include <iostream>
+using namespace std;
 
 SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
 
@@ -14,8 +19,8 @@ SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Connect things.
+    QObject::connect(keysTableWidget, &QTableWidget::cellPressed, this, &SeerKeysConfigPage::handleCellPressed);
 
-    // Setup the widgets
     reset();
 }
 
@@ -41,14 +46,14 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
         keysTableWidget->insertRow(r);
 
         // Insert the KeySequence editor.
-        QKeySequenceEdit* keySequenceEdit = new QKeySequenceEdit;
-        keySequenceEdit->setKeySequence(setting._sequence);
-
-        keysTableWidget->setCellWidget(r, 0, keySequenceEdit);
+        QLabel* keySequence = new QLabel(setting._sequence.toString());
+        keysTableWidget->setCellWidget(r, 0, keySequence);
+        // keysTableWidget->viewport()->installEventFilter(this);
 
         // Insert the Description.
         QLabel* descriptionLabel = new QLabel(setting._description);
         keysTableWidget->setCellWidget(r, 1, descriptionLabel);
+
     }
 
     keysTableWidget->setVerticalHeaderLabels(keys);
@@ -98,3 +103,151 @@ void SeerKeysConfigPage::reset () {
     setKeySettings(SeerKeySettings::populate());
 }
 
+void SeerKeysConfigPage::handleCellPressed(int row, int column) {
+    if (column != 0)
+        return;
+    SeerKeySequencePopup* popup = new SeerKeySequencePopup(this);
+    popup->setWindowModality(Qt::ApplicationModal);
+    popup->setAttribute(Qt::WA_DeleteOnClose);
+
+    int ret = popup->exec();
+    if (ret == 0)       // Reject
+        return;
+
+    if (popup->result() == QDialog::Accepted) {
+        QString keySequenceString = popup->keySequenceString();
+    }
+
+}
+
+SeerKeySequencePopup::SeerKeySequencePopup(QWidget* parent) : QDialog(parent) {
+    setWindowTitle("Edit Shortcut");
+    setAttribute(Qt::WA_DeleteOnClose);
+    resize(320, 180);
+
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    layout->addWidget(new QLabel("Press the desired key combination\nPress ESC to cancel\nPress Backspace to clear\nPress Enter to confirm", this));
+    _keySequenceLineEdit = new QLineEdit(this);
+    layout->addWidget(_keySequenceLineEdit);
+    _keySequenceLineEdit->setReadOnly(true);
+    _keySequenceLineEdit->installEventFilter(this);
+
+    _exit = new QShortcut(QKeySequence(tr("ESC")), this);
+    _enter = new QShortcut(QKeySequence(tr("Return")), this);
+    connect(_exit,  &QShortcut::activated, this, &QDialog::reject);
+    connect(_enter, &QShortcut::activated, this, &QDialog::accept);
+}
+
+SeerKeySequencePopup::~SeerKeySequencePopup() {
+}
+
+void SeerKeySequencePopup::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton && !_isDone) {
+        // Start a Timer, only triggered on single click
+        _timer = new QTimer(this);
+        connect(_timer, &QTimer::timeout, this, &SeerKeySequencePopup::handleTimerTimeout);
+        _timer->start(400);  // Start the timer with a 400ms interval = Qt default time to trigger mousePressEvent
+    }
+}
+
+void SeerKeySequencePopup::handleTimerTimeout() {
+    _timer->stop();
+    if (!_isDone) {
+        if (!_keySequenceString.endsWith("Click") && !_keySequenceString.endsWith("DoubleClick")) {
+                if (!_keySequenceString.isEmpty())
+                _keySequenceString += "+";
+            _keySequenceString += "Click";
+            _keySequenceLineEdit->setText(_keySequenceString);
+            _isDone = true;
+        }
+    }
+}
+
+void SeerKeySequencePopup::mouseDoubleClickEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton && !_isDone) {
+        // Append Double Click to key sequence. If ends with Click or DoubleClick, return.
+        if (!_keySequenceString.endsWith("DoubleClick") && !_keySequenceString.endsWith("Click")) {
+            if (!_keySequenceString.isEmpty())
+                _keySequenceString += "+";
+            _keySequenceString += "DoubleClick";
+            _keySequenceLineEdit->setText(_keySequenceString);
+            _isDone = true;
+        }
+    }
+}
+
+QString SeerKeySequencePopup::keySequenceString() const {
+    return _keySequenceString;
+}
+
+void SeerKeySequencePopup::keyPressEvent(QKeyEvent *event) {
+    if ( _isDone)
+        return;
+    if (event->key() == Qt::Key_Escape) {
+        reject();
+    }
+    else if (event->key() == Qt::Key_Return) {
+        accept();
+    }
+    else {
+
+        // Reject special cases: number
+        if (event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
+            return;
+        }
+
+        Qt::KeyboardModifiers mods = event->modifiers();
+        int key = event->key();
+        QKeySequence seq(mods | key);
+        QString keyText = seq.toString(QKeySequence::PortableText);
+
+        if (event->key() == Qt::Key_Control) {
+            keyText = "Ctrl";
+        }
+        if (event->key() == Qt::Key_Alt) {
+            keyText = "Alt";
+        }
+        if (event->key() == Qt::Key_Shift) {
+            keyText = "Shift";
+        }
+
+        if (_keySequenceString.contains(keyText)) {
+            // Avoid adding duplicate modifiers
+            return;
+        }
+        if (_keySequenceString != "")
+        {
+            if (_keySequenceString.endsWith("Click") || _keySequenceString.endsWith("DoubleClick")
+            || _keySequenceString.back().isUpper() ) {
+                // Avoid adding modifiers after Click or DoubleClick
+                // Avoid adding modifiers after uppercase letter
+                _isDone = true;
+                return;
+            }
+        }
+        
+        if (!_keySequenceString.isEmpty())
+            _keySequenceString += "+";
+        
+        _keySequenceString += keyText;
+
+        _keySequenceLineEdit->setText(_keySequenceString);
+    }
+}
+
+bool SeerKeySequencePopup::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == _keySequenceLineEdit) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            if (keyEvent->key() == Qt::Key_Backspace) {
+                _keySequenceString = "";
+                _keySequenceLineEdit->setText(_keySequenceString);
+                _isDone = false;
+            }
+            else
+                keyPressEvent(keyEvent);
+        }
+    }
+    return false;
+}
