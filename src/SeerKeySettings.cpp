@@ -41,6 +41,17 @@ bool SeerKeySettings::has (const QString& action) const {
     return _keys.contains(action);
 }
 
+bool SeerKeySettings::hasSuffixAction (const QString& action) const {
+
+    if (!has(action)) {
+        return false;
+    }
+    if (_keys[action]._suffix.isEmpty()) {
+        return false;
+    }
+    return true;
+}
+
 SeerKeySetting SeerKeySettings::get (const QString& action) const {
 
     return _keys[action];
@@ -60,35 +71,37 @@ SeerKeySettings SeerKeySettings::populate () {
 
     SeerKeySettings keySettings;
 
-    keySettings.add("Run",                      SeerKeySetting("Run",                   QKeySequence::fromString("F1"),                 "Run the program again. Do not break in \"main\"."));
-    keySettings.add("Start",                    SeerKeySetting("Start",                 QKeySequence::fromString("F2"),                 "Run the program again. Break in \"main\"."));
-    keySettings.add("Continue",                 SeerKeySetting("Continue",              QKeySequence::fromString("F8"),                 "Continue execution of the program."));
-    keySettings.add("Next",                     SeerKeySetting("Next",                  QKeySequence::fromString("F5"),                 "Execute the next line. Step over functions."));
-    keySettings.add("Step",                     SeerKeySetting("Step",                  QKeySequence::fromString("F6"),                 "Execute the next line. Step into functions."));
-    keySettings.add("Nexti",                    SeerKeySetting("Nexti",                 QKeySequence::fromString("Ctrl+F5"),            "Execute the next instruction. Step over functions."));
-    keySettings.add("Stepi",                    SeerKeySetting("Stepi",                 QKeySequence::fromString("Ctrl+F6"),            "Execute the next instruction. Step into functions."));
-    keySettings.add("Finish",                   SeerKeySetting("Finish",                QKeySequence::fromString("F7"),                 "Finish the current function."));
-    keySettings.add("Interrupt",                SeerKeySetting("Interrupt",             QKeySequence::fromString("Ctrl+I"),             "Interrupt the executing program."));
-    keySettings.add("Terminate",                SeerKeySetting("Terminate",             QKeySequence::fromString("Alt+T"),              "Terminate the debugging session."));
-    keySettings.add("Restart",                  SeerKeySetting("Restart",               QKeySequence::fromString("Alt+R"),              "Restart the debugging session."));
-    keySettings.add("Debug",                    SeerKeySetting("Debug",                 QKeySequence::fromString("Alt+D"),              "Open the debug dialog."));
-    keySettings.add("Arguments",                SeerKeySetting("Arguments",             QKeySequence::fromString("Alt+A"),              "Open the argument dialog."));
-    keySettings.add("Quit",                     SeerKeySetting("Quit",                  QKeySequence::fromString("Alt+Q"),              "Quit Seer."));
-    keySettings.add("SearchText",               SeerKeySetting("SearchText",            QKeySequence::fromString("Ctrl+F"),             "Seach for text in the code editor."));
-    keySettings.add("SearchTextNext",           SeerKeySetting("SearchTextNext",        QKeySequence::fromString("Ctrl+G"),             "Seach for next text in the code editor."));
-    keySettings.add("SearchTextPrev",           SeerKeySetting("SearchTextPrev",        QKeySequence::fromString("Ctrl+Shift+G"),       "Seach for previous text in the code editor."));
-    keySettings.add("SearchLine",               SeerKeySetting("SearchLine",            QKeySequence::fromString("Ctrl+L"),             "Seach for line number in the code editor."));
-    keySettings.add("AlternateDir",             SeerKeySetting("AlternateDir",          QKeySequence::fromString("Ctrl+O"),             "Look for source file in an alternate directory."));
-    keySettings.add("ToggleBreakpoint",         SeerKeySetting("ToggleBreakpoint",      QKeySequence::fromString("Ctrl+B"),             "Toggle the breakpoint status of current line."));
-    keySettings.add("ToggleRecordDirection",    SeerKeySetting("ToggleRecordDirection", QKeySequence::fromString("Ctrl+D"),             "Toggle the record playback direction."));
-    keySettings.add("ReverseContinue",          SeerKeySetting("ReverseContinue",       QKeySequence::fromString("Shift+F8"),           "Continue execution of the program in reverse."));
-    keySettings.add("ReverseNext",              SeerKeySetting("ReverseNext",           QKeySequence::fromString("Shift+F5"),           "Execute the previous line. Step over functions."));
-    keySettings.add("ReverseStep",              SeerKeySetting("ReverseStep",           QKeySequence::fromString("Shift+F6"),           "Execute the previous line. Step into functions."));
-    keySettings.add("ReverseNexti",             SeerKeySetting("ReverseNexti",          QKeySequence::fromString("Shift+Ctrl+F5"),      "Execute the previous instruction. Step over functions."));
-    keySettings.add("ReverseStepi",             SeerKeySetting("ReverseStepi",          QKeySequence::fromString("Shift+Ctrl+F6"),      "Execute the previous instruction. Step into functions."));
-    keySettings.add("ReverseFinish",            SeerKeySetting("ReverseFinish",         QKeySequence::fromString("Shift+F7"),           "Finish the current function in reverse."));
-    keySettings.add("RunToLine",                SeerKeySetting("RunToLine",             QKeySequence::fromString("F9"),                 "Run to the currently selected line."));
-    keySettings.add("GoToDefinition",           SeerKeySetting("GoToDefinition",        QKeySequence::fromString("F12"),                "Go to source file for symbol under cursor."));
+    keySettings.add("Run",                      SeerKeySetting("Run",                   QKeySequence::fromString("F1"),                 "Run the program again. Do not break in \"main\".",             ""));
+    keySettings.add("Start",                    SeerKeySetting("Start",                 QKeySequence::fromString("F2"),                 "Run the program again. Break in \"main\".",                    ""));
+    keySettings.add("Continue",                 SeerKeySetting("Continue",              QKeySequence::fromString("F8"),                 "Continue execution of the program.",                           ""));
+    keySettings.add("Next",                     SeerKeySetting("Next",                  QKeySequence::fromString("F5"),                 "Execute the next line. Step over functions.",                  ""));
+    keySettings.add("Step",                     SeerKeySetting("Step",                  QKeySequence::fromString("F6"),                 "Execute the next line. Step into functions.",                  ""));
+    keySettings.add("Nexti",                    SeerKeySetting("Nexti",                 QKeySequence::fromString("Ctrl+F5"),            "Execute the next instruction. Step over functions.",           ""));
+    keySettings.add("Stepi",                    SeerKeySetting("Stepi",                 QKeySequence::fromString("Ctrl+F6"),            "Execute the next instruction. Step into functions.",           ""));
+    keySettings.add("Finish",                   SeerKeySetting("Finish",                QKeySequence::fromString("F7"),                 "Finish the current function.",                                 ""));
+    keySettings.add("Interrupt",                SeerKeySetting("Interrupt",             QKeySequence::fromString("Ctrl+I"),             "Interrupt the executing program.",                             ""));
+    keySettings.add("Terminate",                SeerKeySetting("Terminate",             QKeySequence::fromString("Alt+T"),              "Terminate the debugging session.",                             ""));
+    keySettings.add("Restart",                  SeerKeySetting("Restart",               QKeySequence::fromString("Alt+R"),              "Restart the debugging session.",                               ""));
+    keySettings.add("Debug",                    SeerKeySetting("Debug",                 QKeySequence::fromString("Alt+D"),              "Open the debug dialog.",                                       ""));
+    keySettings.add("Arguments",                SeerKeySetting("Arguments",             QKeySequence::fromString("Alt+A"),              "Open the argument dialog.",                                    ""));
+    keySettings.add("Quit",                     SeerKeySetting("Quit",                  QKeySequence::fromString("Alt+Q"),              "Quit Seer.",                                                   ""));
+    keySettings.add("SearchText",               SeerKeySetting("SearchText",            QKeySequence::fromString("Ctrl+F"),             "Search for text in the code editor.",                          ""));
+    keySettings.add("SearchTextNext",           SeerKeySetting("SearchTextNext",        QKeySequence::fromString("Ctrl+G"),             "Search for next text in the code editor.",                     ""));
+    keySettings.add("SearchTextPrev",           SeerKeySetting("SearchTextPrev",        QKeySequence::fromString("Ctrl+Shift+G"),       "Search for previous text in the code editor.",                 ""));
+    keySettings.add("SearchLine",               SeerKeySetting("SearchLine",            QKeySequence::fromString("Ctrl+L"),             "Search for line number in the code editor.",                   ""));
+    keySettings.add("AlternateDir",             SeerKeySetting("AlternateDir",          QKeySequence::fromString("Ctrl+O"),             "Look for source file in an alternate directory.",              ""));
+    keySettings.add("ToggleBreakpoint",         SeerKeySetting("ToggleBreakpoint",      QKeySequence::fromString("Ctrl+B"),             "Toggle the breakpoint status of current line.",                ""));
+    keySettings.add("ToggleRecordDirection",    SeerKeySetting("ToggleRecordDirection", QKeySequence::fromString("Ctrl+D"),             "Toggle the record playback direction.",                        ""));
+    keySettings.add("ReverseContinue",          SeerKeySetting("ReverseContinue",       QKeySequence::fromString("Shift+F8"),           "Continue execution of the program in reverse.",                ""));
+    keySettings.add("ReverseNext",              SeerKeySetting("ReverseNext",           QKeySequence::fromString("Shift+F5"),           "Execute the previous line. Step over functions.",              ""));
+    keySettings.add("ReverseStep",              SeerKeySetting("ReverseStep",           QKeySequence::fromString("Shift+F6"),           "Execute the previous line. Step into functions.",              ""));
+    keySettings.add("ReverseNexti",             SeerKeySetting("ReverseNexti",          QKeySequence::fromString("Shift+Ctrl+F5"),      "Execute the previous instruction. Step over functions.",       ""));
+    keySettings.add("ReverseStepi",             SeerKeySetting("ReverseStepi",          QKeySequence::fromString("Shift+Ctrl+F6"),      "Execute the previous instruction. Step into functions.",       ""));
+    keySettings.add("ReverseFinish",            SeerKeySetting("ReverseFinish",         QKeySequence::fromString("Shift+F7"),           "Finish the current function in reverse.",                      ""));
+    keySettings.add("RunToLine",                SeerKeySetting("RunToLine",             QKeySequence::fromString("F9"),                 "Run to the currently selected line.",                          ""));
+    keySettings.add("GoToDefinition",           SeerKeySetting("GoToDefinition",        QKeySequence::fromString("F12"),                "Go to source file for symbol under cursor.",                   ""));
+    keySettings.add("GoToLine",                 SeerKeySetting("GoToLine",              QKeySequence::fromString("Ctrl"),               "Do a quick RunToLine or RunToAddress.",                        "DoubleClick"));
+    keySettings.add("GoToDefinitionClick",      SeerKeySetting("GoToDefinitionClick",   QKeySequence::fromString("Alt"),                "Go to source file for symbol under cursor.",                   "DoubleClick"));
 
     return keySettings;
 }

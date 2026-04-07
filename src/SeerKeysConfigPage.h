@@ -32,7 +32,7 @@ class SeerKeysConfigPage : public QWidget, protected Ui::SeerKeysConfigPage {
     protected slots:
 
     private:
-        void handleCellPressed(int row, int column);
+        void                        handleCellPressed           (int row, int column);
 };
 
 class SeerKeySequencePopup : public QDialog {

@@ -11,12 +11,13 @@
 
 struct SeerKeySetting {
 
-    SeerKeySetting(QString action, QKeySequence sequence, QString description) : _action(action), _sequence(sequence), _description(description) {}
+    SeerKeySetting(QString action, QKeySequence sequence, QString description, QString suffix = "") : _action(action), _sequence(sequence), _description(description), _suffix(suffix) {}
     SeerKeySetting() {};
 
     QString         _action;
     QKeySequence    _sequence;
     QString         _description;
+    QString         _suffix;                // suffix is a must if it's set by developer
 };
 
 
@@ -31,6 +32,7 @@ class SeerKeySettings {
 
         QStringList                             keys                () const;
         bool                                    has                 (const QString& action) const;
+        bool                                    hasSuffixAction     (const QString& action) const;
         SeerKeySetting                          get                 (const QString& action) const;
         void                                    add                 (const QString& action, const SeerKeySetting& setting);
         int                                     count               () const;

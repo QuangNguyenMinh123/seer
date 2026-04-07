@@ -17,7 +17,8 @@ SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
 
     // Set up the UI.
     setupUi(this);
-
+    keysTableWidget->setColumnCount(3);
+    keysTableWidget->setColumnHidden(2, true);              // Hide the Suffix column
     // Connect things.
     QObject::connect(keysTableWidget, &QTableWidget::cellPressed, this, &SeerKeysConfigPage::handleCellPressed);
 
@@ -54,6 +55,9 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
         QLabel* descriptionLabel = new QLabel(setting._description);
         keysTableWidget->setCellWidget(r, 1, descriptionLabel);
 
+        // Insert suffix but make it invisible
+        QLabel* suffixLabel = new QLabel(setting._suffix);
+        keysTableWidget->setCellWidget(r, 2, suffixLabel);
     }
 
     keysTableWidget->setVerticalHeaderLabels(keys);
@@ -74,11 +78,12 @@ SeerKeySettings SeerKeysConfigPage::keySettings() const {
         // Get widgets for this row.
         QKeySequenceEdit* keySequenceEdit  = dynamic_cast<QKeySequenceEdit*>(keysTableWidget->cellWidget(r,0));
         QLabel*           descriptionLabel = dynamic_cast<QLabel*>(keysTableWidget->cellWidget(r,1));
+        QLabel*           suffix           = dynamic_cast<QLabel*>(keysTableWidget->cellWidget(r,2));
 
         // Create key setting.
         if (keySequenceEdit != 0 && descriptionLabel != 0) {
 
-            SeerKeySetting setting(key, keySequenceEdit->keySequence(), descriptionLabel->text());
+            SeerKeySetting setting(key, keySequenceEdit->keySequence(), descriptionLabel->text(), suffix->text());
 
             // Add the setting to our settings.
             settings.add(key, setting);
@@ -106,18 +111,35 @@ void SeerKeysConfigPage::reset () {
 void SeerKeysConfigPage::handleCellPressed(int row, int column) {
     if (column != 0)
         return;
+
+    // SeerKeySetting keySetting;
+
+    // QWidget* widget = keysTableWidget->cellWidget(row, 2);
+    // QLabel* label = qobject_cast<QLabel*>(widget);
+    // if (label) {
+    //     keySetting._suffix = label->text();
+    // }
+
+    // widget = keysTableWidget->cellWidget(row, 0);
+    // label = qobject_cast<QLabel*>(widget);
+    // if (label) {
+    //     keySetting._sequence = label->text();
+    // }
+
+    
     SeerKeySequencePopup* popup = new SeerKeySequencePopup(this);
     popup->setWindowModality(Qt::ApplicationModal);
-    popup->setAttribute(Qt::WA_DeleteOnClose);
+    // popup->setAttribute(Qt::WA_DeleteOnClose);
 
     int ret = popup->exec();
     if (ret == 0)       // Reject
         return;
 
-    if (popup->result() == QDialog::Accepted) {
-        QString keySequenceString = popup->keySequenceString();
+    QString keySequenceString = popup->keySequenceString();
+    QLabel* widget = dynamic_cast<QLabel*>(keysTableWidget->cellWidget(row, 0));
+    if (widget) {
+        widget->setText(keySequenceString);
     }
-
 }
 
 SeerKeySequencePopup::SeerKeySequencePopup(QWidget* parent) : QDialog(parent) {
@@ -133,10 +155,16 @@ SeerKeySequencePopup::SeerKeySequencePopup(QWidget* parent) : QDialog(parent) {
     _keySequenceLineEdit->setReadOnly(true);
     _keySequenceLineEdit->installEventFilter(this);
 
-    _exit = new QShortcut(QKeySequence(tr("ESC")), this);
-    _enter = new QShortcut(QKeySequence(tr("Return")), this);
-    connect(_exit,  &QShortcut::activated, this, &QDialog::reject);
+    // _exit = new QShortcut(QKeySequence(tr("ESC")), this);
+    // _enter = new QShortcut(QKeySequence(tr("Return")), this);
+    // connect(_exit,  &QShortcut::activated, this, &QDialog::reject);
+    // connect(_enter, &QShortcut::activated, this, &QDialog::accept);
+
+    _enter = new QShortcut(QKeySequence(Qt::Key_Return), this);
+    _exit  = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+
     connect(_enter, &QShortcut::activated, this, &QDialog::accept);
+    connect(_exit,  &QShortcut::activated, this, &QDialog::reject);
 }
 
 SeerKeySequencePopup::~SeerKeySequencePopup() {
@@ -184,56 +212,49 @@ QString SeerKeySequencePopup::keySequenceString() const {
 void SeerKeySequencePopup::keyPressEvent(QKeyEvent *event) {
     if ( _isDone)
         return;
-    if (event->key() == Qt::Key_Escape) {
-        reject();
-    }
-    else if (event->key() == Qt::Key_Return) {
-        accept();
-    }
-    else {
 
-        // Reject special cases: number
-        if (event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
+    // Reject special cases: number
+    if (event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
+        return;
+    }
+
+    Qt::KeyboardModifiers mods = event->modifiers();
+    int key = event->key();
+    QKeySequence seq(mods | key);
+    QString keyText = seq.toString(QKeySequence::PortableText);
+
+    if (event->key() == Qt::Key_Control) {
+        keyText = "Ctrl";
+    }
+    if (event->key() == Qt::Key_Alt) {
+        keyText = "Alt";
+    }
+    if (event->key() == Qt::Key_Shift) {
+        keyText = "Shift";
+    }
+
+    if (_keySequenceString.contains(keyText)) {
+        // Avoid adding duplicate modifiers
+        return;
+    }
+    if (_keySequenceString != "")
+    {
+        if (_keySequenceString.endsWith("Click") || _keySequenceString.endsWith("DoubleClick")
+        || _keySequenceString.back().isUpper() ) {
+            // Avoid adding modifiers after Click or DoubleClick
+            // Avoid adding modifiers after uppercase letter
+            _isDone = true;
             return;
         }
-
-        Qt::KeyboardModifiers mods = event->modifiers();
-        int key = event->key();
-        QKeySequence seq(mods | key);
-        QString keyText = seq.toString(QKeySequence::PortableText);
-
-        if (event->key() == Qt::Key_Control) {
-            keyText = "Ctrl";
-        }
-        if (event->key() == Qt::Key_Alt) {
-            keyText = "Alt";
-        }
-        if (event->key() == Qt::Key_Shift) {
-            keyText = "Shift";
-        }
-
-        if (_keySequenceString.contains(keyText)) {
-            // Avoid adding duplicate modifiers
-            return;
-        }
-        if (_keySequenceString != "")
-        {
-            if (_keySequenceString.endsWith("Click") || _keySequenceString.endsWith("DoubleClick")
-            || _keySequenceString.back().isUpper() ) {
-                // Avoid adding modifiers after Click or DoubleClick
-                // Avoid adding modifiers after uppercase letter
-                _isDone = true;
-                return;
-            }
-        }
-        
-        if (!_keySequenceString.isEmpty())
-            _keySequenceString += "+";
-        
-        _keySequenceString += keyText;
-
-        _keySequenceLineEdit->setText(_keySequenceString);
     }
+    
+    if (!_keySequenceString.isEmpty())
+        _keySequenceString += "+";
+    
+    _keySequenceString += keyText;
+
+    _keySequenceLineEdit->setText(_keySequenceString);
+    
 }
 
 bool SeerKeySequencePopup::eventFilter(QObject *obj, QEvent *event) {
