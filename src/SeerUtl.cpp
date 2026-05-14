@@ -9,6 +9,8 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QRegularExpressionMatch>
 #include <QtCore/QByteArray>
+#include <QtWidgets/QMessageBox>
+#include <QDir>
 
 // Comment out for now. I don't want to include boost because
 // that would impact people try to compile Seer. Qt6 offer
@@ -1347,6 +1349,25 @@ namespace Seer {
         // Capture and print the stack trace using Boost.Stacktrace.
         // See comments at top.
         // std::cout << "Stack trace:\n" << boost::stacktrace::stacktrace() << std::endl;
+    }
+
+    // Check if directory and file exist, otherwise, raise a notification
+    bool isFileExistNotify (const QString& filename) {
+        if (QFile::exists(filename)) {
+            return true;
+        } else {
+            QMessageBox::warning(nullptr, "Seer", QString("File %1 doesn't exist.").arg(filename), QMessageBox::Ok);
+            return false;
+        }
+    }
+
+    bool isDirExistNotify (const QString& dirname) {
+        if (QDir(dirname).exists()) {
+            return true;
+        } else {
+            QMessageBox::warning(nullptr, "Seer", QString("Directory %1 doesn't exist.").arg(dirname), QMessageBox::Ok);
+            return false;
+        }
     }
 }
 
